@@ -8,8 +8,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pyidaungsu&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', 'Pyidaungsu', sans-serif; background: #0a0b0e; color: #fff; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .container { width: 100%; max-width: 420px; padding: 16px 12px 100px; position: relative; }
+        body { 
+            font-family: 'Inter', 'Pyidaungsu', sans-serif; 
+            background: #0a0b0e; 
+            color: #fff; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* Parallax layers */
+        .parallax-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .layer-1 {
+            background: radial-gradient(circle at 20% 30%, rgba(255,215,0,0.03) 0%, transparent 30%);
+            transform: translateY(0);
+            will-change: transform;
+        }
+        .layer-2 {
+            background: radial-gradient(circle at 80% 70%, rgba(255,165,0,0.03) 0%, transparent 35%);
+            transform: translateY(0);
+            will-change: transform;
+        }
+        .layer-3 {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="10" cy="10" r="2" fill="%23ffd700"/><circle cx="90" cy="30" r="3" fill="%23ffa500"/><circle cx="30" cy="80" r="2" fill="%23ffd700"/><circle cx="70" cy="15" r="2" fill="%23ffa500"/></svg>');
+            background-size: 200px 200px;
+            opacity: 0.2;
+            transform: translateY(0);
+            will-change: transform;
+        }
+        .container { 
+            width: 100%; 
+            max-width: 420px; 
+            padding: 16px 12px 100px; 
+            position: relative;
+            z-index: 10;
+        }
 
         /* Premium Header */
         .premium-header {
@@ -37,12 +79,38 @@
         .greeting-text { font-size: 22px; font-weight: 600; background: linear-gradient(135deg, #fff, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .username-badge { background: rgba(255,215,0,0.15); padding: 4px 12px; border-radius: 40px; font-size: 14px; font-weight: 500; color: #ffd700; display: inline-block; border: 1px solid rgba(255,215,0,0.3); margin-bottom: 6px; }
 
-        .animated-text-container { min-height: 20px; position: relative; overflow: hidden; }
-        .animated-line { font-size: 13px; color: #b0b0c0; opacity: 0; animation: textReveal 9s infinite; position: absolute; width: 100%; }
+        /* Kinetic Typography Container */
+        .animated-text-container { min-height: 20px; position: relative; overflow: hidden; margin-top: 4px; }
+        .animated-line { 
+            font-size: 13px; 
+            color: #b0b0c0; 
+            opacity: 0; 
+            animation: kineticText 9s infinite; 
+            position: absolute; 
+            width: 100%;
+            transform-origin: left center;
+        }
         .animated-line:nth-child(1) { animation-delay: 0s; }
         .animated-line:nth-child(2) { animation-delay: 3s; }
         .animated-line:nth-child(3) { animation-delay: 6s; }
-        @keyframes textReveal { 0%, 100% { opacity: 0; transform: translateY(10px); } 5%, 28% { opacity: 1; transform: translateY(0); } 33% { opacity: 0; transform: translateY(-10px); } }
+        @keyframes kineticText {
+            0%, 100% { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.9);
+                color: #b0b0c0;
+            }
+            5%, 28% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                color: #ffd700;
+                text-shadow: 0 0 5px rgba(255,215,0,0.5);
+            }
+            33% { 
+                opacity: 0; 
+                transform: translateY(-10px) scale(1.1);
+                color: #ffa500;
+            }
+        }
 
         /* Right side invite box */
         .invite-box {
@@ -116,6 +184,11 @@
     </style>
 </head>
 <body>
+    <!-- Parallax Layers -->
+    <div class="parallax-layer layer-1" id="layer1"></div>
+    <div class="parallax-layer layer-2" id="layer2"></div>
+    <div class="parallax-layer layer-3" id="layer3"></div>
+
     <div class="container">
         <div class="premium-header">
             <div class="brand">
@@ -262,6 +335,19 @@
         const labelId = document.getElementById('labelId');
         const nameGroup = document.getElementById('nameGroup');
         let selectedMethod = 'kpay';
+
+        // Parallax layers
+        const layer1 = document.getElementById('layer1');
+        const layer2 = document.getElementById('layer2');
+        const layer3 = document.getElementById('layer3');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            // Different speeds for each layer
+            layer1.style.transform = `translateY(${scrollY * 0.1}px)`;
+            layer2.style.transform = `translateY(${scrollY * 0.2}px)`;
+            layer3.style.transform = `translateY(${scrollY * 0.05}px)`;
+        });
 
         // Tab Navigation Logic
         const navItems = document.querySelectorAll('.nav-item');
