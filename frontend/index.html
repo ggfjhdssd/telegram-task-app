@@ -3,290 +3,488 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Task App</title>
+    <title>Task App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* (same as before) – copy from your existing style section */
-        :root { --primary-glow: #4facfe; --card-bg: rgba(255,255,255,0.08); }
-        body { margin:0; padding:0; font-family:'Inter',sans-serif; background:radial-gradient(circle at top right,#1a1a2e,#16213e,#0f0c29); color:white; display:flex; justify-content:center; min-height:100vh; overflow-y:auto; }
-        .app-container { width:100%; max-width:420px; padding:25px; padding-bottom:120px; }
-        header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
-        .profile-pic { width:50px; height:50px; border-radius:15px; background:linear-gradient(45deg,#6a11cb,#2575fc); display:flex; justify-content:center; align-items:center; font-size:28px; box-shadow:0 5px 15px rgba(37,117,252,0.4); transition:transform 0.2s ease,box-shadow 0.2s ease; }
-        .profile-pic:hover { transform:scale(1.05); box-shadow:0 8px 25px rgba(37,117,252,0.7); }
-        .coin-balance { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); padding:10px 18px; border-radius:30px; font-weight:700; display:flex; align-items:center; gap:8px; animation:coinGlow 2s infinite alternate; transition:all 0.3s ease; }
-        .coin-balance:hover { border-color:#f6d365; box-shadow:0 0 25px #fda085; }
-        @keyframes coinGlow { 0% { box-shadow:0 0 5px #4facfe; } 100% { box-shadow:0 0 20px #4facfe; } }
-        @keyframes modern-burn { 0% { transform:scale(1) rotate(-2deg); filter:drop-shadow(0 0 5px #ff4500) brightness(1); } 50% { transform:scale(1.1) rotate(2deg); filter:drop-shadow(0 0 20px #ffae00) brightness(1.3); } 100% { transform:scale(1) rotate(-2deg); filter:drop-shadow(0 0 5px #ff4500) brightness(1); } }
-        @keyframes sunflower-sway { 0% { transform:rotate(-10deg); } 50% { transform:rotate(10deg); } 100% { transform:rotate(-10deg); } }
-        .card { background:var(--card-bg); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:18px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between; transition:transform 0.2s ease,box-shadow 0.2s ease; }
-        .card:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(79,172,254,0.3); border-color:rgba(79,172,254,0.5); }
-        .flame-icon { font-size:40px; animation:modern-burn 1s infinite alternate ease-in-out; }
-        .coin-icon { font-size:40px; animation:sunflower-sway 2.5s infinite ease-in-out; display:inline-block; }
-        .task-title { flex-grow:1; margin-left:20px; font-size:16px; font-weight:600; }
-        .btn-get { background:linear-gradient(135deg,#00d2ff 0%,#3a7bd5 100%); border:none; padding:10px 16px; border-radius:12px; color:white; font-weight:600; font-size:13px; cursor:pointer; box-shadow:0 4px 10px rgba(58,123,213,0.3); min-width:85px; transition:all 0.2s ease; }
-        .btn-get:hover:not(.disabled) { transform:scale(1.02); box-shadow:0 8px 18px rgba(58,123,213,0.6); }
-        .btn-get:active:not(.disabled) { transform:scale(0.98); }
-        .btn-get.disabled { background:rgba(255,255,255,0.1); color:#888; box-shadow:none; cursor:not-allowed; border:1px solid rgba(255,255,255,0.05); transform:none; }
-        .btn-get.disabled:hover { transform:none; box-shadow:none; }
-        .section { display:none; }
-        .section.active { display:block; }
-        nav { position:fixed; bottom:15px; left:50%; transform:translateX(-50%); width:90%; max-width:380px; background:rgba(10,10,25,0.85); backdrop-filter:blur(15px); display:flex; justify-content:space-around; padding:12px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); }
-        .nav-item { text-align:center; color:#555; font-size:11px; transition:all 0.2s ease; cursor:pointer; }
-        .nav-item.active { color:var(--primary-glow); text-shadow:0 0 8px var(--primary-glow); }
-        .nav-item:hover { color:#fda085; transform:translateY(-2px); }
-        .nav-icon { font-size:20px; transition:transform 0.2s ease; }
-        .nav-item:hover .nav-icon { transform:scale(1.1); }
-        .placeholder { text-align:center; padding:50px 20px; background:rgba(255,255,255,0.03); border-radius:20px; color:#aaa; }
-        .profile-info { background:rgba(255,255,255,0.05); border-radius:20px; padding:20px; text-align:center; }
-        .profile-info p { margin:10px 0; font-size:18px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1a1a2e, #16213e, #0f0c29);
+            color: white;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px 15px 100px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .username {
+            font-size: 14px;
+            color: #a0a0a0;
+        }
+
+        .coin-balance {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #4facfe; }
+            100% { box-shadow: 0 0 20px #4facfe; }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(79,172,254,0.3);
+        }
+
+        .flame-icon {
+            font-size: 40px;
+            animation: burn 1s infinite alternate;
+        }
+
+        @keyframes burn {
+            0% { filter: drop-shadow(0 0 5px #ff4500); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 20px #ffae00); transform: scale(1.1); }
+        }
+
+        .coin-icon {
+            font-size: 40px;
+            animation: sway 2.5s infinite ease-in-out;
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
+        }
+
+        .task-title {
+            flex: 1;
+            margin-left: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 85px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(58,123,213,0.6);
+        }
+
+        .btn:disabled {
+            background: rgba(255,255,255,0.1);
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 380px;
+            background: rgba(10,10,25,0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: #4facfe;
+        }
+
+        .nav-item:hover {
+            color: #fda085;
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            color: #aaa;
+        }
+
+        .profile-info {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .profile-info p {
+            margin: 10px 0;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <div class="avatar">🐱</div>
+                <div>
+                    <h4>Hello,</h4>
+                    <span class="username" id="usernameDisplay">@username</span>
+                </div>
+            </div>
+            <div class="coin-balance">
+                <span>🪙</span>
+                <span id="totalCoins">1,250</span>
+            </div>
+        </header>
 
-<div class="app-container">
-    <header>
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <div class="profile-pic">🐱</div>
-            <div>
-                <h4 style="margin:0;">Hello,</h4>
-                <small style="color: #888;" id="usernameDisplay">@username</small>
+        <!-- Home Section -->
+        <div id="homeSection" class="section active">
+            <div class="card">
+                <div class="flame-icon">🔥</div>
+                <div class="task-title">Daily Check-in</div>
+                <button class="btn" id="dailyBtn">Check-in</button>
+            </div>
+
+            <div class="card">
+                <div class="coin-icon">🪙</div>
+                <div class="task-title">Task 1</div>
+                <button class="btn task-btn" data-id="task1">Get +30</button>
+            </div>
+            <div class="card">
+                <div class="coin-icon">🪙</div>
+                <div class="task-title">Task 2</div>
+                <button class="btn task-btn" data-id="task2">Get +30</button>
+            </div>
+            <div class="card">
+                <div class="coin-icon">🪙</div>
+                <div class="task-title">Task 3</div>
+                <button class="btn task-btn" data-id="task3">Get +30</button>
+            </div>
+            <div class="card">
+                <div class="coin-icon">🪙</div>
+                <div class="task-title">Task 4</div>
+                <button class="btn task-btn" data-id="task4">Get +30</button>
+            </div>
+            <div class="card">
+                <div class="coin-icon">🪙</div>
+                <div class="task-title">Task 5</div>
+                <button class="btn task-btn" data-id="task5">Get +30</button>
             </div>
         </div>
-        <div class="coin-balance">
-            <span style="color: gold;">🪙</span> <span id="total-coins">1,250</span>
-        </div>
-    </header>
 
-    <!-- Sections -->
-    <div id="homeSection" class="section active">
-        <div class="card">
-            <div class="flame-icon">🔥</div>
-            <div class="task-title">Daily Check-in</div>
-            <button class="btn-get" id="dailyBtn">Check-in</button>
+        <!-- Earn Section -->
+        <div id="earnSection" class="section">
+            <div class="placeholder">
+                <h2>💰 Earn Coins</h2>
+                <p>Watch ads & complete offers</p>
+                <p style="margin-top:20px;">Coming Soon...</p>
+            </div>
         </div>
 
-        <!-- 5 task cards (same IDs as before) -->
-        <div class="card"><div class="coin-icon">🪙</div><div class="task-title">Special Task</div><button class="btn-get task-btn" data-id="s1">Get +30</button></div>
-        <div class="card"><div class="coin-icon">🪙</div><div class="task-title">Special Task</div><button class="btn-get task-btn" data-id="s2">Get +30</button></div>
-        <div class="card"><div class="coin-icon">🪙</div><div class="task-title">Special Task</div><button class="btn-get task-btn" data-id="s3">Get +30</button></div>
-        <div class="card"><div class="coin-icon">🪙</div><div class="task-title">Special Task</div><button class="btn-get task-btn" data-id="s4">Get +30</button></div>
-        <div class="card"><div class="coin-icon">🪙</div><div class="task-title">Special Task</div><button class="btn-get task-btn" data-id="s5">Get +30</button></div>
+        <!-- Games Section -->
+        <div id="gamesSection" class="section">
+            <div class="placeholder">
+                <h2>🎮 Play Games</h2>
+                <p>Earn while having fun</p>
+                <p style="margin-top:20px;">Coming Soon...</p>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileSection" class="section">
+            <div class="profile-info">
+                <div class="avatar" style="width:80px; height:80px; font-size:48px; margin:0 auto 20px;">🐱</div>
+                <p><strong>Username:</strong> <span id="profileUsername">@username</span></p>
+                <p><strong>Coins:</strong> <span id="profileCoins">1,250</span></p>
+                <p><strong>Member Since:</strong> 2026</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-item active" data-tab="home"><div class="nav-icon">🏠</div>Home</div>
+            <div class="nav-item" data-tab="earn"><div class="nav-icon">💰</div>Earn</div>
+            <div class="nav-item" data-tab="games"><div class="nav-icon">🎮</div>Games</div>
+            <div class="nav-item" data-tab="profile"><div class="nav-icon">👤</div>Profile</div>
+        </nav>
     </div>
 
-    <div id="earnSection" class="section"><div class="placeholder"><h2>Earn More Coins</h2><p>Watch ads or complete offers</p><p>(Coming soon)</p></div></div>
-    <div id="gamesSection" class="section"><div class="placeholder"><h2>Play Games</h2><p>Earn coins while having fun</p><p>(Coming soon)</p></div></div>
-    <div id="profileSection" class="section">
-        <div class="profile-info">
-            <div class="profile-pic" style="margin:0 auto 20px; width:80px; height:80px; font-size:48px;">🐱</div>
-            <p><strong>Username:</strong> <span id="profileUsername">@username</span></p>
-            <p><strong>Coins:</strong> <span id="profileCoins">1,250</span></p>
-            <p><strong>Member since:</strong> Task App</p>
-        </div>
-    </div>
-
-    <nav>
-        <div class="nav-item active" data-tab="home"><div class="nav-icon">🏠</div>Home</div>
-        <div class="nav-item" data-tab="earn"><div class="nav-icon">🪙</div>Earn</div>
-        <div class="nav-item" data-tab="games"><div class="nav-icon">🎮</div>Games</div>
-        <div class="nav-item" data-tab="profile"><div class="nav-icon">👤</div>Profile</div>
-    </nav>
-</div>
-
-<script>
-    const API_BASE = 'https://your-backend.onrender.com'; // Replace after deployment
-
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.expand();
-        tg.ready();
-    }
-
-    const initData = tg?.initData || ''; // will be sent in headers
-
-    // DOM elements
-    const usernameSpan = document.getElementById('usernameDisplay');
-    const profileUsername = document.getElementById('profileUsername');
-    const totalCoinsSpan = document.getElementById('total-coins');
-    const profileCoinsSpan = document.getElementById('profileCoins');
-    const dailyBtn = document.getElementById('dailyBtn');
-    const taskButtons = document.querySelectorAll('.task-btn');
-
-    // Helper: format ms to HH:MM:SS
-    function formatTime(ms) {
-        if (ms < 0) ms = 0;
-        let totalSeconds = Math.floor(ms / 1000);
-        let hours = Math.floor(totalSeconds / 3600);
-        let minutes = Math.floor((totalSeconds % 3600) / 60);
-        let seconds = totalSeconds % 60;
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    // Update UI with user data from server
-    function updateUI(userData) {
-        // Username
-        const displayName = userData.username ? '@' + userData.username : 'User';
-        usernameSpan.innerText = displayName;
-        profileUsername.innerText = displayName;
-
-        // Coins
-        totalCoinsSpan.innerText = userData.coins.toLocaleString();
-        profileCoinsSpan.innerText = userData.coins.toLocaleString();
-
-        // Daily button
-        const now = Date.now();
-        const dailyLast = userData.dailyLastClaim || 0;
-        const dailyCooldown = 24 * 60 * 60 * 1000;
-        const dailyRemaining = dailyCooldown - (now - dailyLast);
-        if (dailyRemaining > 0 && dailyLast !== 0) {
-            dailyBtn.classList.add('disabled');
-            dailyBtn.innerText = formatTime(dailyRemaining);
-        } else {
-            dailyBtn.classList.remove('disabled');
-            dailyBtn.innerText = 'Check-in';
+    <script>
+        const API_BASE = 'https://your-backend.onrender.com'; // ⚠️ ဒါကို ခင်ဗျား Render URL နဲ့ အစားထိုးရမယ်
+        const tg = window.Telegram?.WebApp;
+        
+        if (tg) {
+            tg.expand();
+            tg.ready();
         }
 
-        // Task buttons
-        taskButtons.forEach(btn => {
-            const taskId = btn.dataset.id;
-            const last = userData.tasks[taskId] || 0;
-            const taskCooldown = 2 * 60 * 60 * 1000;
-            const remaining = taskCooldown - (now - last);
-            if (remaining > 0 && last !== 0) {
-                btn.classList.add('disabled');
-                btn.innerText = formatTime(remaining);
+        const initData = tg?.initData || '';
+
+        // DOM Elements
+        const usernameSpan = document.getElementById('usernameDisplay');
+        const profileUsername = document.getElementById('profileUsername');
+        const totalCoinsSpan = document.getElementById('totalCoins');
+        const profileCoinsSpan = document.getElementById('profileCoins');
+        const dailyBtn = document.getElementById('dailyBtn');
+        const taskBtns = document.querySelectorAll('.task-btn');
+
+        // Helper: Format milliseconds to HH:MM:SS
+        function formatTime(ms) {
+            if (ms < 0) ms = 0;
+            const sec = Math.floor(ms / 1000);
+            const h = Math.floor(sec / 3600).toString().padStart(2, '0');
+            const m = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
+            const s = (sec % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        // Update UI with user data from server
+        function updateUI(data) {
+            const displayName = data.username ? '@' + data.username : 'User';
+            usernameSpan.innerText = displayName;
+            profileUsername.innerText = displayName;
+
+            totalCoinsSpan.innerText = data.coins.toLocaleString();
+            profileCoinsSpan.innerText = data.coins.toLocaleString();
+
+            const now = Date.now();
+            const dailyLast = data.dailyLastClaim || 0;
+            const dailyRemaining = (24 * 60 * 60 * 1000) - (now - dailyLast);
+
+            if (dailyRemaining > 0 && dailyLast !== 0) {
+                dailyBtn.disabled = true;
+                dailyBtn.innerText = formatTime(dailyRemaining);
             } else {
-                btn.classList.remove('disabled');
-                btn.innerText = 'Get +30';
+                dailyBtn.disabled = false;
+                dailyBtn.innerText = 'Check-in';
             }
-        });
-    }
 
-    // Fetch initial user data
-    async function fetchUser() {
-        try {
-            const res = await fetch(`${API_BASE}/api/user`, {
-                headers: { 'X-Telegram-Init-Data': initData }
-            });
-            if (!res.ok) throw new Error('Failed to fetch user');
-            const data = await res.json();
-            updateUI(data);
-            startLocalTimers(data);
-        } catch (err) {
-            console.error(err);
-        }
-    }
+            taskBtns.forEach(btn => {
+                const taskId = btn.dataset.id;
+                const last = data.tasks?.[taskId] || 0;
+                const remaining = (2 * 60 * 60 * 1000) - (now - last);
 
-    // Start local countdowns using server timestamps
-    function startLocalTimers(userData) {
-        // Daily countdown
-        if (userData.dailyLastClaim) {
-            const dailyLast = userData.dailyLastClaim;
-            const dailyCooldown = 24 * 60 * 60 * 1000;
-            const updateDaily = () => {
-                const now = Date.now();
-                const remaining = dailyCooldown - (now - dailyLast);
-                if (remaining <= 0) {
-                    dailyBtn.classList.remove('disabled');
-                    dailyBtn.innerText = 'Check-in';
+                if (remaining > 0 && last !== 0) {
+                    btn.disabled = true;
+                    btn.innerText = formatTime(remaining);
                 } else {
-                    dailyBtn.classList.add('disabled');
-                    dailyBtn.innerText = formatTime(remaining);
-                    setTimeout(updateDaily, 1000);
+                    btn.disabled = false;
+                    btn.innerText = 'Get +30';
                 }
-            };
-            updateDaily();
+            });
         }
 
-        // Task countdowns
-        taskButtons.forEach(btn => {
-            const taskId = btn.dataset.id;
-            const last = userData.tasks[taskId];
-            if (last) {
-                const taskCooldown = 2 * 60 * 60 * 1000;
-                const updateTask = () => {
-                    const now = Date.now();
-                    const remaining = taskCooldown - (now - last);
+        // Fetch user data from backend
+        async function fetchUser() {
+            try {
+                const res = await fetch(`${API_BASE}/api/user`, {
+                    headers: { 'X-Telegram-Init-Data': initData }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    updateUI(data);
+                    startLocalTimers(data);
+                }
+            } catch (err) {
+                console.error('Fetch user error:', err);
+            }
+        }
+
+        // Start local countdowns
+        function startLocalTimers(data) {
+            const now = Date.now();
+            const dailyLast = data.dailyLastClaim || 0;
+            const dailyRemaining = (24 * 60 * 60 * 1000) - (now - dailyLast);
+
+            if (dailyRemaining > 0 && dailyLast !== 0) {
+                const updateDaily = () => {
+                    const remaining = (24 * 60 * 60 * 1000) - (Date.now() - dailyLast);
                     if (remaining <= 0) {
-                        btn.classList.remove('disabled');
-                        btn.innerText = 'Get +30';
+                        dailyBtn.disabled = false;
+                        dailyBtn.innerText = 'Check-in';
                     } else {
-                        btn.classList.add('disabled');
-                        btn.innerText = formatTime(remaining);
-                        setTimeout(updateTask, 1000);
+                        dailyBtn.disabled = true;
+                        dailyBtn.innerText = formatTime(remaining);
+                        setTimeout(updateDaily, 1000);
                     }
                 };
-                updateTask();
+                updateDaily();
             }
-        });
-    }
 
-    // Claim daily
-    dailyBtn.addEventListener('click', async () => {
-        if (dailyBtn.classList.contains('disabled')) return;
-        try {
-            const res = await fetch(`${API_BASE}/api/claim/daily`, {
-                method: 'POST',
-                headers: { 'X-Telegram-Init-Data': initData }
+            taskBtns.forEach(btn => {
+                const taskId = btn.dataset.id;
+                const last = data.tasks?.[taskId] || 0;
+                const remaining = (2 * 60 * 60 * 1000) - (now - last);
+
+                if (remaining > 0 && last !== 0) {
+                    const updateTask = () => {
+                        const remaining = (2 * 60 * 60 * 1000) - (Date.now() - last);
+                        if (remaining <= 0) {
+                            btn.disabled = false;
+                            btn.innerText = 'Get +30';
+                        } else {
+                            btn.disabled = true;
+                            btn.innerText = formatTime(remaining);
+                            setTimeout(updateTask, 1000);
+                        }
+                    };
+                    updateTask();
+                }
             });
-            const data = await res.json();
-            if (res.ok) {
-                // Update coins and daily timestamp locally
-                totalCoinsSpan.innerText = data.coins.toLocaleString();
-                profileCoinsSpan.innerText = data.coins.toLocaleString();
-                // Restart timers with new data
-                fetchUser(); // simpler: refetch full user
-            } else {
-                alert(data.error || 'Claim failed');
-            }
-        } catch (err) {
-            console.error(err);
         }
-    });
 
-    // Claim task
-    taskButtons.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (btn.classList.contains('disabled')) return;
-            const taskId = btn.dataset.id;
+        // Daily claim
+        dailyBtn.addEventListener('click', async () => {
+            if (dailyBtn.disabled) return;
             try {
-                const res = await fetch(`${API_BASE}/api/claim/task/${taskId}`, {
+                const res = await fetch(`${API_BASE}/api/claim/daily`, {
                     method: 'POST',
                     headers: { 'X-Telegram-Init-Data': initData }
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    totalCoinsSpan.innerText = data.coins.toLocaleString();
-                    profileCoinsSpan.innerText = data.coins.toLocaleString();
-                    fetchUser(); // refresh all timers
+                    fetchUser(); // refresh all
                 } else {
                     alert(data.error || 'Claim failed');
                 }
             } catch (err) {
-                console.error(err);
+                console.error('Daily claim error:', err);
             }
         });
-    });
 
-    // Tab navigation (same as before)
-    const navItems = document.querySelectorAll('.nav-item');
-    const sections = {
-        home: document.getElementById('homeSection'),
-        earn: document.getElementById('earnSection'),
-        games: document.getElementById('gamesSection'),
-        profile: document.getElementById('profileSection')
-    };
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-            Object.values(sections).forEach(s => s.classList.remove('active'));
-            const tab = item.dataset.tab;
-            if (sections[tab]) sections[tab].classList.add('active');
+        // Task claim
+        taskBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (btn.disabled) return;
+                const taskId = btn.dataset.id;
+                try {
+                    const res = await fetch(`${API_BASE}/api/claim/task/${taskId}`, {
+                        method: 'POST',
+                        headers: { 'X-Telegram-Init-Data': initData }
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        fetchUser();
+                    } else {
+                        alert(data.error || 'Claim failed');
+                    }
+                } catch (err) {
+                    console.error('Task claim error:', err);
+                }
+            });
         });
-    });
 
-    // Start
-    fetchUser();
-</script>
+        // Tab Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = {
+            home: document.getElementById('homeSection'),
+            earn: document.getElementById('earnSection'),
+            games: document.getElementById('gamesSection'),
+            profile: document.getElementById('profileSection')
+        };
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                Object.values(sections).forEach(s => s.classList.remove('active'));
+                const tab = item.dataset.tab;
+                if (sections[tab]) sections[tab].classList.add('active');
+            });
+        });
+
+        // Start
+        fetchUser();
+    </script>
 </body>
 </html>
