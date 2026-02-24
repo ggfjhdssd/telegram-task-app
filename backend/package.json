@@ -1,14 +1,16 @@
 {
-  "name": "telegram-task-backend",
+  "name": "paycoinads-backend",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "bot": "node bot.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^7.5.0"
+    "mongoose": "^7.5.0",
+    "node-telegram-bot-api": "^0.64.0"
   }
 }
