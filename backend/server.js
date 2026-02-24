@@ -4,24 +4,36 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const crypto = require('crypto');
 const TelegramBot = require('node-telegram-bot-api');
+const helmet = require('helmet'); // Security အတွက်
+const rateLimit = require('express-rate-limit'); // Spam/DDoS ကာကွယ်ရန်
 
 const app = express();
+
+// ==================== Security & Middlewares ====================
+app.use(helmet()); // HTTP Header များကို လုံခြုံအောင်လုပ်ပေးသည်
 app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: '10kb' })); // Payload size limit ထားပြီး Hack တာကိုကာကွယ်သည်
+
+// API Rate Limiting (Spam ကာကွယ်ရန်)
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 မိနစ်အတွင်း
+    max: 150, // Request 150 ကြိမ်သာခွင့်ပြုမည်
+    message: { error: 'Too many requests, please try again later.' }
+});
+app.use('/api/', apiLimiter);
 
 // ==================== MongoDB Models ====================
 
-// Config Schema (for dynamic settings)
 const configSchema = new mongoose.Schema({
     key: { type: String, unique: true },
     value: mongoose.Schema.Types.Mixed
 });
 const Config = mongoose.model('Config', configSchema);
 
-// User Schema
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
+    photoUrl: { type: String, default: null }, // Profile ပုံအတွက် အသစ်ထည့်ထားသည်
     coins: { type: Number, default: 0 },
     dailyLastClaim: { type: Number, default: 0 },
     tasks: { type: Map, of: Number, default: {} },
@@ -31,14 +43,13 @@ const userSchema = new mongoose.Schema({
     banned: { type: Boolean, default: false }
 });
 
-// Withdrawal Schema (auto-delete after 30 days)
 const withdrawalSchema = new mongoose.Schema({
     userId: { type: Number, required: true },
     amount: { type: Number, required: true },
     method: { type: String, enum: ['kpay', 'wavepay', 'binance'], required: true },
     accountDetails: { type: String, required: true },
     status: { type: String, enum: ['pending', 'completed', 'rejected'], default: 'pending' },
-    createdAt: { type: Date, default: Date.now, expires: 60 * 60 * 24 * 30 } // auto-delete after 30 days
+    createdAt: { type: Date, default: Date.now, expires: 60 * 60 * 24 * 30 } 
 });
 
 const User = mongoose.model('User', userSchema);
@@ -50,8 +61,8 @@ const DEFAULT_CONFIG = {
     DAILY_REWARD: 15,
     TASK_REWARD: 30,
     MIN_WITHDRAWAL: 1000,
-    TASK_COOLDOWN: 2 * 60 * 60 * 1000, // 2 hours in ms
-    DAILY_COOLDOWN: 24 * 60 * 60 * 1000 // 24 hours in ms
+    TASK_COOLDOWN: 2 * 60 * 60 * 1000, 
+    DAILY_COOLDOWN: 24 * 60 * 60 * 1000 
 };
 
 async function getConfig(key) {
@@ -67,15 +78,13 @@ async function setConfig(key, value) {
     await Config.updateOne({ key }, { value }, { upsert: true });
 }
 
-// ==================== Telegram Bot Setup (Webhook) ====================
+// ==================== Telegram Bot Setup ====================
 const bot = new TelegramBot(process.env.BOT_TOKEN);
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
 const GROUP_ID = parseInt(process.env.GROUP_ID);
 
-// Set webhook on startup
 bot.setWebHook(process.env.WEBHOOK_URL);
 
-// Webhook endpoint
 app.post('/webhook', express.json(), (req, res) => {
     bot.processUpdate(req.body);
     res.sendStatus(200);
@@ -117,23 +126,21 @@ async function getUser(userId, username) {
 }
 
 // ==================== Bot Commands ====================
-
-// Helper: check admin
 function isAdmin(msg) {
     return msg.from.id === ADMIN_ID;
 }
 
-// Start command with referral
+// User Start Command Updated
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    const username = msg.from.username || 'user';
-    const referralCode = match[1]; // should be a user ID
+    const username = msg.from.username || msg.from.first_name || 'User';
+    const referralCode = match[1]; 
 
     let user = await User.findOne({ userId });
     if (!user) {
         user = new User({ userId, username });
-        if (referralCode && !isNaN(referralCode)) {
+        if (referralCode && !isNaN(referralCode) && parseInt(referralCode) !== userId) {
             const referrer = await User.findOne({ userId: parseInt(referralCode) });
             if (referrer && !referrer.banned) {
                 user.referredBy = parseInt(referralCode);
@@ -146,15 +153,18 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
         }
         await user.save();
     }
+    
     const webAppUrl = process.env.FRONTEND_URL;
-    await bot.sendMessage(chatId, `မင်္ဂလာပါ! PayCoinAds သို့ ကြိုဆိုပါတယ်။`, {
+    const welcomeMsg = `မင်္ဂလာပါ ${username}၊ PayCoinAds မှ ကြိုဆိုပါတယ်။ 🎉\n\nဂိမ်းဆော့ပြီး ပိုက်ဆံရှာရန် အောက်က Play Game ကိုနှိပ်ပါ။ 👇`;
+    
+    await bot.sendMessage(chatId, welcomeMsg, {
         reply_markup: {
-            inline_keyboard: [[{ text: '🎮 အက်ပ်ဖွင့်ရန်', web_app: { url: webAppUrl } }]]
+            inline_keyboard: [[{ text: '🎮 Play Game', web_app: { url: webAppUrl } }]]
         }
     });
 });
 
-// Admin commands
+// Admin commands (No changes, preserved as requested)
 bot.onText(/\/ban (\d+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const targetId = parseInt(match[1]);
@@ -213,12 +223,10 @@ bot.onText(/\/list (\d+)/, async (msg, match) => {
     bot.sendMessage(msg.chat.id, response);
 });
 
-// Admin config commands
 bot.onText(/\/set (\w+) (\w+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const key = match[1];
     let value = match[2];
-    // Handle numeric values
     if (!isNaN(value)) value = parseInt(value);
     if (DEFAULT_CONFIG.hasOwnProperty(key)) {
         await setConfig(key, value);
@@ -239,7 +247,6 @@ bot.onText(/\/get (\w+)/, async (msg, match) => {
     }
 });
 
-// Withdrawal approval (optional admin command)
 bot.onText(/\/approve (\w+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const withdrawalId = match[1];
@@ -252,7 +259,6 @@ bot.onText(/\/reject (\w+)/, async (msg, match) => {
     const withdrawalId = match[1];
     const withdrawal = await Withdrawal.findById(withdrawalId);
     if (withdrawal) {
-        // Refund coins
         await User.updateOne({ userId: withdrawal.userId }, { $inc: { coins: withdrawal.amount } });
         await Withdrawal.findByIdAndUpdate(withdrawalId, { status: 'rejected' });
         bot.sendMessage(msg.chat.id, `Withdrawal ${withdrawalId} rejected and refunded.`);
@@ -264,13 +270,28 @@ app.get('/health', (req, res) => res.send('OK'));
 
 app.get('/api/user', authMiddleware, async (req, res) => {
     try {
-        const user = await getUser(req.tgUser.id, req.tgUser.username);
+        const user = await getUser(req.tgUser.id, req.tgUser.username || req.tgUser.first_name);
         if (user.banned) {
             return res.status(403).json({ error: 'Your account is banned' });
         }
+
+        // Profile Picture ဆွဲထုတ်ခြင်း (မရှိသေးရင် သို့မဟုတ် update ဖြစ်ဖို့)
+        try {
+            const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
+            if (photos.total_count > 0) {
+                const fileId = photos.photos[0][0].file_id;
+                const photoUrl = await bot.getFileLink(fileId);
+                if (user.photoUrl !== photoUrl) {
+                    user.photoUrl = photoUrl;
+                    await user.save();
+                }
+            }
+        } catch (e) { console.error('Error fetching profile photo:', e.message); }
+
         res.json({
             userId: user.userId,
             username: user.username,
+            photoUrl: user.photoUrl, // Frontend သို့ ပုံပါပို့ပေးမည်
             coins: user.coins,
             dailyLastClaim: user.dailyLastClaim,
             tasks: Object.fromEntries(user.tasks),
@@ -283,7 +304,10 @@ app.get('/api/user', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/claim/daily', authMiddleware, async (req, res) => {
+// Claim Route များကို အလွန်အကျွံမနှိပ်နိုင်အောင် Rate Limit ထပ်ခံထားသည်
+const claimLimiter = rateLimit({ windowMs: 60 * 1000, max: 10, message: { error: 'Too many clicks' } });
+
+app.post('/api/claim/daily', authMiddleware, claimLimiter, async (req, res) => {
     try {
         const user = await getUser(req.tgUser.id, req.tgUser.username);
         if (user.banned) return res.status(403).json({ error: 'Banned' });
@@ -302,7 +326,7 @@ app.post('/api/claim/daily', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/claim/task/:taskId', authMiddleware, async (req, res) => {
+app.post('/api/claim/task/:taskId', authMiddleware, claimLimiter, async (req, res) => {
     try {
         const { taskId } = req.params;
         const user = await getUser(req.tgUser.id, req.tgUser.username);
@@ -323,41 +347,45 @@ app.post('/api/claim/task/:taskId', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/withdraw', authMiddleware, async (req, res) => {
+app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
     try {
-        const { method, accountDetails, amount } = req.body;
+        const { method, accountDetails, accountName, amount } = req.body; // Added accountName
         if (!method || !accountDetails || !amount) {
             return res.status(400).json({ error: 'Missing fields' });
         }
         if (!['kpay', 'wavepay', 'binance'].includes(method)) {
             return res.status(400).json({ error: 'Invalid payment method' });
         }
+        
+        // Validation (အရှုပ်အထွေးကင်းအောင် Type စစ်ဆေးခြင်း)
+        const withdrawalAmount = Number(amount);
+        if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
+            return res.status(400).json({ error: 'Invalid amount' });
+        }
+
         const minWithdraw = await getConfig('MIN_WITHDRAWAL');
-        if (amount < minWithdraw) {
+        if (withdrawalAmount < minWithdraw) {
             return res.status(400).json({ error: `Minimum withdrawal is ${minWithdraw} coins` });
         }
 
         const user = await getUser(req.tgUser.id, req.tgUser.username);
         if (user.banned) return res.status(403).json({ error: 'Banned' });
-        if (user.coins < amount) {
+        if (user.coins < withdrawalAmount) {
             return res.status(400).json({ error: 'Insufficient balance' });
         }
 
-        // Deduct coins
-        user.coins -= amount;
+        user.coins -= withdrawalAmount;
         await user.save();
 
-        // Create withdrawal record (auto-delete after 30 days)
         const withdrawal = new Withdrawal({
             userId: user.userId,
-            amount,
+            amount: withdrawalAmount,
             method,
-            accountDetails
+            accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}` // Added Name into details
         });
         await withdrawal.save();
 
-        // Send notification to admin group
-        const message = `💸 Withdrawal Request\nUser: @${user.username || 'No username'} (${user.userId})\nAmount: ${amount} coins\nMethod: ${method}\nAccount: ${accountDetails}\nTime: ${new Date().toLocaleString()}`;
+        const message = `💸 Withdrawal Request\nUser: @${user.username || 'No username'} (${user.userId})\nAmount: ${withdrawalAmount} coins\nMethod: ${method}\nAccount: ${accountDetails} ${accountName ? `\nName: ${accountName}` : ''}\nTime: ${new Date().toLocaleString()}`;
         await bot.sendMessage(GROUP_ID, message);
 
         res.json({ success: true, remainingCoins: user.coins });
