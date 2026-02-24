@@ -22,8 +22,14 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
-// ==================== MongoDB Models ====================
+// Claim Route များကို အလွန်အကျွံမနှိပ်နိုင်အောင် Rate Limit ထပ်ခံထားသည်
+const claimLimiter = rateLimit({ 
+    windowMs: 60 * 1000, 
+    max: 10, 
+    message: { error: 'Too many clicks. Please slow down.' } 
+});
 
+// ==================== MongoDB Models ====================
 const configSchema = new mongoose.Schema({
     key: { type: String, unique: true },
     value: mongoose.Schema.Types.Mixed
@@ -33,7 +39,7 @@ const Config = mongoose.model('Config', configSchema);
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
-    photoUrl: { type: String, default: null }, // Profile ပုံအတွက် အသစ်ထည့်ထားသည်
+    photoUrl: { type: String, default: null }, // Profile ပုံအတွက်
     coins: { type: Number, default: 0 },
     dailyLastClaim: { type: Number, default: 0 },
     tasks: { type: Map, of: Number, default: {} },
@@ -42,6 +48,7 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     banned: { type: Boolean, default: false }
 });
+const User = mongoose.model('User', userSchema);
 
 const withdrawalSchema = new mongoose.Schema({
     userId: { type: Number, required: true },
@@ -51,8 +58,6 @@ const withdrawalSchema = new mongoose.Schema({
     status: { type: String, enum: ['pending', 'completed', 'rejected'], default: 'pending' },
     createdAt: { type: Date, default: Date.now, expires: 60 * 60 * 24 * 30 } 
 });
-
-const User = mongoose.model('User', userSchema);
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
 // ==================== Default Configs ====================
@@ -130,7 +135,6 @@ function isAdmin(msg) {
     return msg.from.id === ADMIN_ID;
 }
 
-// User Start Command Updated
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -164,7 +168,7 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     });
 });
 
-// Admin commands (No changes, preserved as requested)
+// Admin commands
 bot.onText(/\/ban (\d+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const targetId = parseInt(match[1]);
@@ -275,7 +279,7 @@ app.get('/api/user', authMiddleware, async (req, res) => {
             return res.status(403).json({ error: 'Your account is banned' });
         }
 
-        // Profile Picture ဆွဲထုတ်ခြင်း (မရှိသေးရင် သို့မဟုတ် update ဖြစ်ဖို့)
+        // Profile Picture ဆွဲထုတ်ခြင်း
         try {
             const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
             if (photos.total_count > 0) {
@@ -286,7 +290,9 @@ app.get('/api/user', authMiddleware, async (req, res) => {
                     await user.save();
                 }
             }
-        } catch (e) { console.error('Error fetching profile photo:', e.message); }
+        } catch (e) { 
+            console.error('Error fetching profile photo:', e.message); 
+        }
 
         res.json({
             userId: user.userId,
@@ -303,9 +309,6 @@ app.get('/api/user', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Database error' });
     }
 });
-
-// Claim Route များကို အလွန်အကျွံမနှိပ်နိုင်အောင် Rate Limit ထပ်ခံထားသည်
-const claimLimiter = rateLimit({ windowMs: 60 * 1000, max: 10, message: { error: 'Too many clicks' } });
 
 app.post('/api/claim/daily', authMiddleware, claimLimiter, async (req, res) => {
     try {
@@ -349,7 +352,7 @@ app.post('/api/claim/task/:taskId', authMiddleware, claimLimiter, async (req, re
 
 app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
     try {
-        const { method, accountDetails, accountName, amount } = req.body; // Added accountName
+        const { method, accountDetails, accountName, amount } = req.body; 
         if (!method || !accountDetails || !amount) {
             return res.status(400).json({ error: 'Missing fields' });
         }
@@ -357,7 +360,6 @@ app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
             return res.status(400).json({ error: 'Invalid payment method' });
         }
         
-        // Validation (အရှုပ်အထွေးကင်းအောင် Type စစ်ဆေးခြင်း)
         const withdrawalAmount = Number(amount);
         if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
             return res.status(400).json({ error: 'Invalid amount' });
@@ -381,7 +383,7 @@ app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
             userId: user.userId,
             amount: withdrawalAmount,
             method,
-            accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}` // Added Name into details
+            accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}` 
         });
         await withdrawal.save();
 
