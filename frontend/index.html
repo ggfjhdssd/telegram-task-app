@@ -76,24 +76,19 @@
             color: #8e8e9d;
         }
 
-        /* ==================== Random Profile Avatar ==================== */
-        .profile-avatar {
-            width: 45px;
-            height: 45px;
+        /* ==================== Header Avatar (Random) ==================== */
+        .header-avatar {
+            width: 40px;
+            height: 40px;
             background: linear-gradient(145deg, #2a2a3c, #1a1a28);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 22px;
             border: 2px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 4px 12px rgba(255,215,0,0.2);
-            transition: transform 0.2s ease;
-        }
-
-        .profile-avatar:hover {
-            transform: scale(1.05);
-            border-color: #ffd700;
+            margin-right: 8px;
         }
 
         /* ==================== Glassmorphism Balance ==================== */
@@ -176,6 +171,7 @@
         .animated-text-container {
             margin-top: 12px;
             min-height: 40px;
+            position: relative;
         }
 
         .animated-line {
@@ -211,8 +207,8 @@
             font-weight: 600;
         }
 
-        /* ==================== Refined Withdrawal Button ==================== */
-        .withdraw-premium {
+        /* ==================== Withdrawal Button (Home Menu) ==================== */
+        .withdraw-home {
             background: linear-gradient(135deg, #00b09b, #96c93d);
             border: none;
             padding: 14px 20px;
@@ -221,12 +217,12 @@
             font-weight: 700;
             font-size: 18px;
             text-align: center;
-            margin: 0 auto 30px;
+            margin: 0 0 20px 0;
             cursor: pointer;
             box-shadow: 0 12px 25px rgba(0, 176, 155, 0.3);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.2);
-            width: 85%;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -235,14 +231,45 @@
             transform: scale(1);
         }
 
-        .withdraw-premium:active {
+        .withdraw-home:active {
             transform: scale(0.97);
             box-shadow: 0 6px 15px rgba(0, 176, 155, 0.4);
         }
 
-        .withdraw-premium:hover {
+        .withdraw-home:hover {
             transform: translateY(-2px);
             box-shadow: 0 18px 30px rgba(0, 176, 155, 0.4);
+        }
+
+        /* ==================== Invite Button ==================== */
+        .invite-button {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border: none;
+            padding: 16px 20px;
+            border-radius: 40px;
+            color: #1a1a2e;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(255, 215, 0, 0.3);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .invite-button:active {
+            transform: scale(0.97);
+        }
+
+        .invite-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 30px rgba(255, 215, 0, 0.4);
         }
 
         /* ==================== Task Cards ==================== */
@@ -316,7 +343,7 @@
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease; /* ပိုမြန်အောင် 0.1s */
             min-width: 80px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -383,7 +410,7 @@
         /* ==================== Sections ==================== */
         .section {
             display: none;
-            animation: fadeSlide 0.3s ease;
+            animation: fadeSlide 0.2s ease; /* ပိုမြန်အောင် 0.2s */
         }
 
         .section.active {
@@ -401,16 +428,7 @@
             }
         }
 
-        /* ==================== Profile & Placeholders ==================== */
-        .placeholder {
-            text-align: center;
-            padding: 40px 20px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 28px;
-            color: #5e5e71;
-            border: 1px dashed rgba(255,215,0,0.2);
-        }
-
+        /* ==================== Profile Layout (New) ==================== */
         .profile-premium {
             background: rgba(20, 22, 30, 0.7);
             backdrop-filter: blur(12px);
@@ -418,6 +436,7 @@
             padding: 24px;
             text-align: center;
             border: 1px solid rgba(255,215,0,0.15);
+            margin-bottom: 20px; /* withdrawal button နဲ့ ခြားဖို့ */
         }
 
         .profile-premium .avatar-large {
@@ -432,14 +451,48 @@
             margin: 0 auto 16px;
             box-shadow: 0 15px 25px rgba(255,215,0,0.3);
         }
+
+        .profile-withdraw {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            border: none;
+            padding: 16px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(0, 176, 155, 0.3);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .profile-withdraw:active {
+            transform: scale(0.97);
+        }
+
+        /* ==================== Placeholders ==================== */
+        .placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 28px;
+            color: #5e5e71;
+            border: 1px dashed rgba(255,215,0,0.2);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Premium Header -->
+        <!-- Premium Header (with Random Avatar) -->
         <div class="premium-header">
             <div class="brand">
-                <div class="brand-icon">💰</div>
+                <div class="header-avatar" id="headerAvatar">💰</div>
                 <div class="brand-text">
                     <h4>PayCoinAds</h4>
                     <span>earn & withdraw</span>
@@ -454,7 +507,6 @@
         <!-- Compact Greeting Card -->
         <div class="greeting-compact" id="greetingCard">
             <div class="greeting-row">
-                <!-- စာသားအရင်လာမယ် (မင်္ဂလာပါ) ပြီးမှ လက်သင်္ကေတ -->
                 <span class="greeting-text">မင်္ဂလာပါ</span>
                 <span class="wave-hand">🖐️</span>
             </div>
@@ -474,13 +526,15 @@
             </div>
         </div>
 
-        <!-- Refined Withdrawal Button -->
-        <button class="withdraw-premium" id="withdrawBtn">
-            <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
-        </button>
-
+        <!-- Sections (Tab Content) -->
+        
         <!-- Home Section -->
         <div id="homeSection" class="section active">
+            <!-- Withdrawal Button (Home Menu) -->
+            <button class="withdraw-home" id="homeWithdrawBtn">
+                <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
+            </button>
+
             <!-- Daily Check-in Card -->
             <div class="task-card">
                 <div class="task-icon flame-pulse">🔥</div>
@@ -538,32 +592,45 @@
             </div>
         </div>
 
-        <!-- Earn Section -->
+        <!-- Earn Section (with Invite Button) -->
         <div id="earnSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700; margin-bottom:12px;">💰 Earn More</h2>
                 <p>Watch ads · Complete offers</p>
                 <p style="margin-top:20px; font-size:14px;">Coming soon...</p>
             </div>
+            <!-- Invite Friend Button -->
+            <button class="invite-button" id="earnInviteBtn">
+                <span>👥</span> INVITE FRIEND <span>(မိတ်ဆွေဖိတ်ရန်)</span>
+            </button>
         </div>
 
-        <!-- Games Section -->
+        <!-- Games Section (with Invite Button) -->
         <div id="gamesSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700; margin-bottom:12px;">🎮 Play & Earn</h2>
                 <p>Mini games coming</p>
                 <p style="margin-top:20px; font-size:14px;">Stay tuned</p>
             </div>
+            <!-- Invite Friend Button -->
+            <button class="invite-button" id="gamesInviteBtn">
+                <span>👥</span> INVITE FRIEND <span>(မိတ်ဆွေဖိတ်ရန်)</span>
+            </button>
         </div>
 
-        <!-- Profile Section -->
+        <!-- Profile Section (New Layout: Profile first, then Withdrawal) -->
         <div id="profileSection" class="section">
+            <!-- Profile Info (အပေါ်မှာ) -->
             <div class="profile-premium">
                 <div class="avatar-large" id="profileAvatar">💰</div>
                 <p style="font-size:20px; font-weight:600; margin-bottom:8px;" id="profileUsername">@username</p>
                 <p style="color:#ffd700; font-size:28px; font-weight:700; margin-bottom:12px;"><span id="profileCoins">0</span> 🪙</p>
                 <p style="color:#8e8e9d;">Member since 2026 · PayCoinAds</p>
             </div>
+            <!-- Withdrawal Button (အောက်မှာ) -->
+            <button class="profile-withdraw" id="profileWithdrawBtn">
+                <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
+            </button>
         </div>
 
         <!-- Floating Navigation -->
@@ -600,17 +667,16 @@
         const initData = tg?.initData || '';
 
         // ==================== Random Profile Avatar ====================
-        const avatarEmojis = ['🧑‍🎄', '🐻', '🐶', '🦊', '🐼', '🐨', '🦁', '🐸'];
+        const avatarEmojis = ['🧑‍🎄', '🐻', '🐶', '🦊', '🐼', '🐨', '🦁', '🐸', '🐧', '🐱'];
         
-        // User ID ကို hash လုပ်ပြီး random လုပ်မယ် (ဒါမှ user တစ်ယောက်နဲ့တစ်ယောက် တူညီမှာ မဟုတ်ဘူး)
         function getRandomAvatar(userId) {
             if (!userId) return avatarEmojis[0];
-            // userId ကို hash လုပ်ပြီး array length နဲ့ modulo လုပ်မယ်
             const hash = String(userId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             return avatarEmojis[hash % avatarEmojis.length];
         }
 
         // DOM Elements
+        const headerAvatar = document.getElementById('headerAvatar');
         const profileAvatar = document.getElementById('profileAvatar');
         const usernameSpan = document.getElementById('profileUsername');
         const welcomeUsername = document.getElementById('welcomeUsername');
@@ -618,12 +684,28 @@
         const profileCoinsSpan = document.getElementById('profileCoins');
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
-        const withdrawBtn = document.getElementById('withdrawBtn');
+        
+        // Withdrawal Buttons (3 ခု)
+        const homeWithdrawBtn = document.getElementById('homeWithdrawBtn');
+        const profileWithdrawBtn = document.getElementById('profileWithdrawBtn');
+        
+        // Invite Buttons (2 ခု)
+        const earnInviteBtn = document.getElementById('earnInviteBtn');
+        const gamesInviteBtn = document.getElementById('gamesInviteBtn');
 
-        // ==================== Withdrawal Button ====================
-        withdrawBtn.addEventListener('click', () => {
+        // ==================== Withdrawal Buttons ====================
+        const withdrawHandler = () => {
             alert('💸 Withdrawal feature coming soon!\nငွေထုတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
-        });
+        };
+        homeWithdrawBtn.addEventListener('click', withdrawHandler);
+        profileWithdrawBtn.addEventListener('click', withdrawHandler);
+
+        // ==================== Invite Buttons ====================
+        const inviteHandler = () => {
+            alert('👥 Invite feature coming soon!\nမိတ်ဆွေဖိတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
+        };
+        earnInviteBtn.addEventListener('click', inviteHandler);
+        gamesInviteBtn.addEventListener('click', inviteHandler);
 
         // ==================== Helper Functions ====================
         function formatTime(ms) {
@@ -642,10 +724,10 @@
             
             let current = oldValue;
             const step = newValue > oldValue ? 1 : -1;
-            const interval = 10; // ms
-            const duration = 200; // ms
+            const interval = 5; // ms (ပိုမြန်အောင် 5ms)
+            const duration = 150; // ms (ပိုမြန်အောင် 150ms)
             const steps = Math.abs(newValue - oldValue);
-            const stepTime = duration / steps;
+            const stepTime = steps > 0 ? duration / steps : 0;
             
             const timer = setInterval(() => {
                 current += step;
@@ -662,9 +744,11 @@
             usernameSpan.innerText = displayName;
             welcomeUsername.innerText = displayName;
 
-            // Set random avatar based on user ID
+            // Set random avatar based on user ID (for both header and profile)
             if (data.userId) {
-                profileAvatar.innerText = getRandomAvatar(data.userId);
+                const avatar = getRandomAvatar(data.userId);
+                headerAvatar.innerText = avatar;
+                profileAvatar.innerText = avatar;
             }
 
             // Animate coin update
@@ -698,11 +782,14 @@
             });
         }
 
-        // Fetch user data from backend
+        // Fetch user data from backend (ပိုမြန်အောင် no cache)
         async function fetchUser() {
             try {
                 const res = await fetch(`${API_BASE}/api/user`, {
-                    headers: { 'X-Telegram-Init-Data': initData }
+                    headers: { 
+                        'X-Telegram-Init-Data': initData,
+                        'Cache-Control': 'no-cache'
+                    }
                 });
                 const data = await res.json();
                 if (res.ok) {
@@ -757,13 +844,16 @@
             });
         }
 
-        // Daily claim
+        // Daily claim (ပိုမြန်အောင်)
         dailyBtn.addEventListener('click', async () => {
             if (dailyBtn.disabled) return;
             try {
                 const res = await fetch(`${API_BASE}/api/claim/daily`, {
                     method: 'POST',
-                    headers: { 'X-Telegram-Init-Data': initData }
+                    headers: { 
+                        'X-Telegram-Init-Data': initData,
+                        'Cache-Control': 'no-cache'
+                    }
                 });
                 const data = await res.json();
                 if (res.ok) {
@@ -776,7 +866,7 @@
             }
         });
 
-        // Task claim
+        // Task claim (ပိုမြန်အောင်)
         taskBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (btn.disabled) return;
@@ -784,7 +874,10 @@
                 try {
                     const res = await fetch(`${API_BASE}/api/claim/task/${taskId}`, {
                         method: 'POST',
-                        headers: { 'X-Telegram-Init-Data': initData }
+                        headers: { 
+                            'X-Telegram-Init-Data': initData,
+                            'Cache-Control': 'no-cache'
+                        }
                     });
                     const data = await res.json();
                     if (res.ok) {
@@ -820,11 +913,10 @@
 
         // ==================== Entrance Animation ====================
         window.addEventListener('load', () => {
-            // Staggered fade-in for greeting elements
             const greetingElements = document.querySelectorAll('.greeting-row, .username-badge, .animated-text-container');
             greetingElements.forEach((el, index) => {
                 el.style.opacity = '0';
-                el.style.animation = `fadeSlide 0.5s ease ${index * 0.1 + 0.2}s forwards`;
+                el.style.animation = `fadeSlide 0.3s ease ${index * 0.1 + 0.2}s forwards`;
             });
         });
 
