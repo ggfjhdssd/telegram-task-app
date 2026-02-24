@@ -12,7 +12,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Inter', 'Pyidaungsu', sans-serif;
             background: #0a0b0e;
@@ -22,7 +21,6 @@
             min-height: 100vh;
             line-height: 1.5;
         }
-
         .container {
             width: 100%;
             max-width: 420px;
@@ -30,7 +28,7 @@
             position: relative;
         }
 
-        /* ==================== Premium Header ==================== */
+        /* Premium Header */
         .premium-header {
             display: flex;
             justify-content: space-between;
@@ -43,13 +41,11 @@
             border: 1px solid rgba(255, 215, 0, 0.15);
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .brand-icon {
             width: 40px;
             height: 40px;
@@ -61,22 +57,17 @@
             font-size: 22px;
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
         }
-
         .brand-text h4 {
             font-size: 16px;
             font-weight: 600;
-            letter-spacing: 0.5px;
             background: linear-gradient(135deg, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .brand-text span {
             font-size: 12px;
             color: #8e8e9d;
         }
-
-        /* ==================== Header Avatar (Random) ==================== */
         .header-avatar {
             width: 40px;
             height: 40px;
@@ -90,8 +81,6 @@
             box-shadow: 0 4px 12px rgba(255,215,0,0.2);
             margin-right: 8px;
         }
-
-        /* ==================== Glassmorphism Balance ==================== */
         .glass-balance {
             background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
             backdrop-filter: blur(12px);
@@ -106,36 +95,34 @@
             color: #ffd700;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
         }
+        .glass-balance span:first-child { font-size: 20px; }
 
-        .glass-balance span:first-child {
-            font-size: 20px;
-        }
-
-        /* ==================== Compact Greeting Card ==================== */
-        .greeting-compact {
+        /* Greeting Card with Two Columns */
+        .greeting-card {
             background: linear-gradient(145deg, #1e1e2f, #2a2a3c);
             border-radius: 24px;
             padding: 18px 20px;
             margin-bottom: 20px;
             border: 1px solid rgba(255, 215, 0, 0.2);
             box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
+        .greeting-left {
+            flex: 2;
+        }
         .greeting-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 6px;
         }
-
-        /* လက်သင်္ကေတအတွက် motion */
         .wave-hand {
-            font-size: 36px;
-            display: inline-block;
+            font-size: 28px;
             animation: waveHand 2s infinite ease-in-out;
             transform-origin: 70% 70%;
         }
-
         @keyframes waveHand {
             0% { transform: rotate(0deg); }
             10% { transform: rotate(14deg); }
@@ -146,18 +133,16 @@
             60% { transform: rotate(0deg); }
             100% { transform: rotate(0deg); }
         }
-
         .greeting-text {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             background: linear-gradient(135deg, #ffffff, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .username-badge {
             background: rgba(255, 215, 0, 0.15);
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 40px;
             font-size: 14px;
             font-weight: 500;
@@ -165,17 +150,14 @@
             display: inline-block;
             border: 1px solid rgba(255, 215, 0, 0.3);
             backdrop-filter: blur(5px);
+            margin-bottom: 6px;
         }
-
-        /* ==================== Text Reveal & Retract Animation ==================== */
         .animated-text-container {
-            margin-top: 12px;
             min-height: 40px;
             position: relative;
         }
-
         .animated-line {
-            font-size: 16px;
+            font-size: 14px;
             color: #b0b0c0;
             opacity: 0;
             animation: textRevealRetract 8s infinite;
@@ -183,17 +165,9 @@
             width: 100%;
             left: 0;
         }
-
-        .animated-line:nth-child(1) {
-            animation-delay: 0s;
-        }
-        .animated-line:nth-child(2) {
-            animation-delay: 2.5s;
-        }
-        .animated-line:nth-child(3) {
-            animation-delay: 5s;
-        }
-
+        .animated-line:nth-child(1) { animation-delay: 0s; }
+        .animated-line:nth-child(2) { animation-delay: 2.5s; }
+        .animated-line:nth-child(3) { animation-delay: 5s; }
         @keyframes textRevealRetract {
             0% { opacity: 0; transform: translateY(10px); }
             5% { opacity: 1; transform: translateY(0); }
@@ -201,13 +175,39 @@
             30% { opacity: 0; transform: translateY(-10px); }
             100% { opacity: 0; transform: translateY(-10px); }
         }
+        .animated-line strong { color: #ffd700; }
 
-        .animated-line strong {
+        /* Right side box */
+        .invite-box {
+            flex: 1;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 16px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(5px);
+            animation: fadeInBox 2s infinite alternate;
+        }
+        @keyframes fadeInBox {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .invite-box .small-text {
+            font-size: 12px;
             color: #ffd700;
-            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .invite-box .big-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .invite-box .big-number span {
+            font-size: 16px;
+            color: #ffd700;
         }
 
-        /* ==================== Withdrawal Button (Home Menu) ==================== */
+        /* Withdrawal Button */
         .withdraw-home {
             background: linear-gradient(135deg, #00b09b, #96c93d);
             border: none;
@@ -220,28 +220,64 @@
             margin: 0 0 20px 0;
             cursor: pointer;
             box-shadow: 0 12px 25px rgba(0, 176, 155, 0.3);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s;
             border: 1px solid rgba(255,255,255,0.2);
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            letter-spacing: 1px;
-            transform: scale(1);
         }
+        .withdraw-home:active { transform: scale(0.97); }
 
-        .withdraw-home:active {
-            transform: scale(0.97);
-            box-shadow: 0 6px 15px rgba(0, 176, 155, 0.4);
+        /* Task Cards */
+        .task-card {
+            background: rgba(25, 27, 35, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
-
-        .withdraw-home:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 30px rgba(0, 176, 155, 0.4);
+        .task-card:hover { border-color: rgba(255, 215, 0, 0.2); transform: translateX(4px); }
+        .task-icon { font-size: 36px; }
+        .flame-pulse { animation: flameGlow 1.5s infinite alternate; }
+        @keyframes flameGlow {
+            0% { filter: drop-shadow(0 0 5px #ff4500); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 20px #ff8c00); transform: scale(1.08); }
         }
+        .coin-sway { animation: sway 2.5s infinite ease-in-out; }
+        @keyframes sway {
+            0% { transform: rotate(-8deg); }
+            50% { transform: rotate(8deg); }
+            100% { transform: rotate(-8deg); }
+        }
+        .task-info { flex: 1; margin-left: 16px; }
+        .task-info h4 { font-size: 16px; font-weight: 600; }
+        .task-info p { font-size: 12px; color: #8e8e9d; }
+        .btn-modern {
+            background: linear-gradient(135deg, #2b2b3b, #1e1e2a);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.1s;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .btn-modern:active:not(:disabled) { transform: scale(0.94); }
+        .btn-modern:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ==================== Invite Button ==================== */
+        /* Invite Button in Earn/Games */
         .invite-button {
             background: linear-gradient(135deg, #ffd700, #ffa500);
             border: none;
@@ -254,7 +290,7 @@
             margin: 20px 0;
             cursor: pointer;
             box-shadow: 0 12px 25px rgba(255, 215, 0, 0.3);
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             border: 1px solid rgba(255,255,255,0.2);
             width: 100%;
             display: flex;
@@ -262,107 +298,98 @@
             justify-content: center;
             gap: 12px;
         }
+        .invite-button:active { transform: scale(0.97); }
 
-        .invite-button:active {
-            transform: scale(0.97);
-        }
-
-        .invite-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 30px rgba(255, 215, 0, 0.4);
-        }
-
-        /* ==================== Task Cards ==================== */
-        .task-card {
-            background: rgba(25, 27, 35, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            display: flex;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
             align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s ease;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            justify-content: center;
         }
-
-        .task-card:hover {
-            border-color: rgba(255, 215, 0, 0.2);
-            transform: translateX(4px);
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #1e1e2f;
+            border-radius: 32px;
+            padding: 24px;
+            width: 90%;
+            max-width: 380px;
+            border: 1px solid rgba(255,215,0,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
-
-        .task-icon {
-            font-size: 36px;
-            filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.2));
-        }
-
-        /* Pulse animation for flame */
-        .flame-pulse {
-            animation: flameGlow 1.5s infinite alternate;
-        }
-
-        @keyframes flameGlow {
-            0% { filter: drop-shadow(0 0 5px #ff4500); transform: scale(1); }
-            100% { filter: drop-shadow(0 0 20px #ff8c00); transform: scale(1.08); }
-        }
-
-        /* Sway for coin */
-        .coin-sway {
-            animation: sway 2.5s infinite ease-in-out;
-        }
-
-        @keyframes sway {
-            0% { transform: rotate(-8deg); }
-            50% { transform: rotate(8deg); }
-            100% { transform: rotate(-8deg); }
-        }
-
-        .task-info {
-            flex: 1;
-            margin-left: 16px;
-        }
-
-        .task-info h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .task-info p {
-            font-size: 12px;
-            color: #8e8e9d;
-        }
-
-        .btn-modern {
-            background: linear-gradient(135deg, #2b2b3b, #1e1e2a);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 8px 16px;
-            border-radius: 30px;
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
             color: #ffd700;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.1s ease; /* ပိုမြန်အောင် 0.1s */
-            min-width: 80px;
+        }
+        .payment-methods {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .method-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 40px;
+            padding: 12px 0;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .method-btn.selected {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+        .method-btn img { width: 30px; height: 30px; }
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        .input-field::placeholder { color: #6b6b7a; }
+        .error-text {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .close-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 8px;
         }
 
-        .btn-modern:active:not(:disabled) {
-            transform: scale(0.94);
-            background: #2b2b3b;
-        }
-
-        .btn-modern:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #1a1a24;
-            color: #6b6b7a;
-            border-color: transparent;
-        }
-
-        /* ==================== Floating Navigation ==================== */
+        /* Navigation */
         .floating-nav {
             position: fixed;
             bottom: 20px;
@@ -380,55 +407,32 @@
             box-shadow: 0 20px 35px rgba(0,0,0,0.5);
             z-index: 1000;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             color: #5e5e71;
             font-size: 11px;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             cursor: pointer;
             padding: 4px 12px;
             border-radius: 30px;
         }
-
         .nav-item.active {
             color: #ffd700;
             background: rgba(255, 215, 0, 0.1);
         }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        .nav-item.active .nav-icon {
-            filter: drop-shadow(0 0 8px #ffd700);
-        }
-
-        .nav-icon {
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
-
-        /* ==================== Sections ==================== */
-        .section {
-            display: none;
-            animation: fadeSlide 0.2s ease; /* ပိုမြန်အောင် 0.2s */
-        }
-
-        .section.active {
-            display: block;
-        }
-
+        /* Sections */
+        .section { display: none; animation: fadeSlide 0.2s ease; }
+        .section.active { display: block; }
         @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ==================== Profile Layout (New) ==================== */
+        /* Profile */
         .profile-premium {
             background: rgba(20, 22, 30, 0.7);
             backdrop-filter: blur(12px);
@@ -436,12 +440,10 @@
             padding: 24px;
             text-align: center;
             border: 1px solid rgba(255,215,0,0.15);
-            margin-bottom: 20px; /* withdrawal button နဲ့ ခြားဖို့ */
+            margin-bottom: 20px;
         }
-
-        .profile-premium .avatar-large {
-            width: 80px;
-            height: 80px;
+        .avatar-large {
+            width: 80px; height: 80px;
             background: linear-gradient(145deg, #ffd700, #ffa500);
             border-radius: 30px;
             display: flex;
@@ -451,7 +453,6 @@
             margin: 0 auto 16px;
             box-shadow: 0 15px 25px rgba(255,215,0,0.3);
         }
-
         .profile-withdraw {
             background: linear-gradient(135deg, #00b09b, #96c93d);
             border: none;
@@ -460,23 +461,13 @@
             color: white;
             font-weight: 700;
             font-size: 18px;
-            text-align: center;
             cursor: pointer;
-            box-shadow: 0 12px 25px rgba(0, 176, 155, 0.3);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.2);
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
         }
-
-        .profile-withdraw:active {
-            transform: scale(0.97);
-        }
-
-        /* ==================== Placeholders ==================== */
         .placeholder {
             text-align: center;
             padding: 40px 20px;
@@ -489,7 +480,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Premium Header (with Random Avatar) -->
+        <!-- Header -->
         <div class="premium-header">
             <div class="brand">
                 <div class="header-avatar" id="headerAvatar">💰</div>
@@ -498,44 +489,41 @@
                     <span>earn & withdraw</span>
                 </div>
             </div>
-            <div class="glass-balance" id="balanceDisplay">
+            <div class="glass-balance">
                 <span>🪙</span>
                 <span id="totalCoins">0</span>
             </div>
         </div>
 
-        <!-- Compact Greeting Card -->
-        <div class="greeting-compact" id="greetingCard">
-            <div class="greeting-row">
-                <span class="greeting-text">မင်္ဂလာပါ</span>
-                <span class="wave-hand">🖐️</span>
+        <!-- Greeting Card with two columns -->
+        <div class="greeting-card">
+            <div class="greeting-left">
+                <div class="greeting-row">
+                    <span class="greeting-text">မင်္ဂလာပါ</span>
+                    <span class="wave-hand">🖐️</span>
+                </div>
+                <div class="username-badge" id="welcomeUsername">@username</div>
+                <div class="animated-text-container">
+                    <div class="animated-line"><strong>PayCoinAds</strong> မှ ကြိုဆိုပါတယ်</div>
+                    <div class="animated-line">ငွေထုတ်ရန် ခလုတ်ကို နှိပ်ပါ</div>
+                    <div class="animated-line">နေ့စဉ် Check-in လုပ်ပါ</div>
+                </div>
             </div>
-            <div class="username-badge" id="welcomeUsername">@username</div>
-            
-            <!-- Text Reveal & Retract Container -->
-            <div class="animated-text-container">
-                <div class="animated-line">
-                    <strong>PayCoinAds</strong> မှ ကြိုဆိုပါတယ်
-                </div>
-                <div class="animated-line">
-                    ငွေထုတ်ရန် ခလုတ်ကို နှိပ်ပါ
-                </div>
-                <div class="animated-line">
-                    နေ့စဉ် Check-in လုပ်ပါ
-                </div>
+            <div class="invite-box">
+                <div class="small-text">ဖိတ်တိုင်း</div>
+                <div class="big-number">10<span>🪙</span></div>
+                <div class="small-text">ရယူပါ</div>
             </div>
         </div>
 
-        <!-- Sections (Tab Content) -->
-        
-        <!-- Home Section -->
-        <div id="homeSection" class="section active">
-            <!-- Withdrawal Button (Home Menu) -->
-            <button class="withdraw-home" id="homeWithdrawBtn">
-                <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
-            </button>
+        <!-- Withdrawal Button (Home) -->
+        <button class="withdraw-home" id="homeWithdrawBtn">
+            <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
+        </button>
 
-            <!-- Daily Check-in Card -->
+        <!-- Sections -->
+        <div id="homeSection" class="section active">
+            <!-- Daily Check-in -->
             <div class="task-card">
                 <div class="task-icon flame-pulse">🔥</div>
                 <div class="task-info">
@@ -544,170 +532,222 @@
                 </div>
                 <button class="btn-modern" id="dailyBtn">Check-in</button>
             </div>
-
-            <!-- Task 1 -->
+            <!-- Tasks -->
             <div class="task-card">
                 <div class="task-icon coin-sway">🪙</div>
-                <div class="task-info">
-                    <h4>Task 1</h4>
-                    <p>+30 coins · 2h cooldown</p>
-                </div>
+                <div class="task-info"><h4>Task 1</h4><p>+30 coins · 2h cooldown</p></div>
                 <button class="btn-modern task-btn" data-id="task1">Get +30</button>
             </div>
-            <!-- Task 2 -->
             <div class="task-card">
                 <div class="task-icon coin-sway">🪙</div>
-                <div class="task-info">
-                    <h4>Task 2</h4>
-                    <p>+30 coins · 2h cooldown</p>
-                </div>
+                <div class="task-info"><h4>Task 2</h4><p>+30 coins · 2h cooldown</p></div>
                 <button class="btn-modern task-btn" data-id="task2">Get +30</button>
             </div>
-            <!-- Task 3 -->
             <div class="task-card">
                 <div class="task-icon coin-sway">🪙</div>
-                <div class="task-info">
-                    <h4>Task 3</h4>
-                    <p>+30 coins · 2h cooldown</p>
-                </div>
+                <div class="task-info"><h4>Task 3</h4><p>+30 coins · 2h cooldown</p></div>
                 <button class="btn-modern task-btn" data-id="task3">Get +30</button>
             </div>
-            <!-- Task 4 -->
             <div class="task-card">
                 <div class="task-icon coin-sway">🪙</div>
-                <div class="task-info">
-                    <h4>Task 4</h4>
-                    <p>+30 coins · 2h cooldown</p>
-                </div>
+                <div class="task-info"><h4>Task 4</h4><p>+30 coins · 2h cooldown</p></div>
                 <button class="btn-modern task-btn" data-id="task4">Get +30</button>
             </div>
-            <!-- Task 5 -->
             <div class="task-card">
                 <div class="task-icon coin-sway">🪙</div>
-                <div class="task-info">
-                    <h4>Task 5</h4>
-                    <p>+30 coins · 2h cooldown</p>
-                </div>
+                <div class="task-info"><h4>Task 5</h4><p>+30 coins · 2h cooldown</p></div>
                 <button class="btn-modern task-btn" data-id="task5">Get +30</button>
             </div>
         </div>
 
-        <!-- Earn Section (with Invite Button) -->
+        <!-- Earn Section -->
         <div id="earnSection" class="section">
             <div class="placeholder">
-                <h2 style="color:#ffd700; margin-bottom:12px;">💰 Earn More</h2>
+                <h2 style="color:#ffd700;">💰 Earn More</h2>
                 <p>Watch ads · Complete offers</p>
-                <p style="margin-top:20px; font-size:14px;">Coming soon...</p>
+                <p style="margin-top:20px;">Coming soon...</p>
             </div>
-            <!-- Invite Friend Button -->
             <button class="invite-button" id="earnInviteBtn">
-                <span>👥</span> INVITE FRIEND <span>(မိတ်ဆွေဖိတ်ရန်)</span>
+                <span>👥</span> Invite friends & get 10 coins 🪙
             </button>
         </div>
 
-        <!-- Games Section (with Invite Button) -->
+        <!-- Games Section -->
         <div id="gamesSection" class="section">
             <div class="placeholder">
-                <h2 style="color:#ffd700; margin-bottom:12px;">🎮 Play & Earn</h2>
+                <h2 style="color:#ffd700;">🎮 Play & Earn</h2>
                 <p>Mini games coming</p>
-                <p style="margin-top:20px; font-size:14px;">Stay tuned</p>
+                <p style="margin-top:20px;">Stay tuned</p>
             </div>
-            <!-- Invite Friend Button -->
             <button class="invite-button" id="gamesInviteBtn">
-                <span>👥</span> INVITE FRIEND <span>(မိတ်ဆွေဖိတ်ရန်)</span>
+                <span>👥</span> Invite friends & get 10 coins 🪙
             </button>
         </div>
 
-        <!-- Profile Section (New Layout: Profile first, then Withdrawal) -->
+        <!-- Profile Section -->
         <div id="profileSection" class="section">
-            <!-- Profile Info (အပေါ်မှာ) -->
             <div class="profile-premium">
                 <div class="avatar-large" id="profileAvatar">💰</div>
-                <p style="font-size:20px; font-weight:600; margin-bottom:8px;" id="profileUsername">@username</p>
-                <p style="color:#ffd700; font-size:28px; font-weight:700; margin-bottom:12px;"><span id="profileCoins">0</span> 🪙</p>
-                <p style="color:#8e8e9d;">Member since 2026 · PayCoinAds</p>
+                <p style="font-size:20px; font-weight:600;" id="profileUsername">@username</p>
+                <p style="color:#ffd700; font-size:28px; font-weight:700; margin:8px 0;"><span id="profileCoins">0</span> 🪙</p>
+                <p style="color:#8e8e9d;">Joined: <span id="joinDate">2026-02-24</span></p>
+                <p style="color:#8e8e9d;">Referrals: <span id="referralCount">0</span></p>
             </div>
-            <!-- Withdrawal Button (အောက်မှာ) -->
             <button class="profile-withdraw" id="profileWithdrawBtn">
-                <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
+                <span>💸</span> WITHDRAWAL MONEY
             </button>
         </div>
 
-        <!-- Floating Navigation -->
+        <!-- Navigation -->
         <nav class="floating-nav">
-            <div class="nav-item active" data-tab="home">
-                <div class="nav-icon">🏠</div>
-                <span>Home</span>
-            </div>
-            <div class="nav-item" data-tab="earn">
-                <div class="nav-icon">💰</div>
-                <span>Earn</span>
-            </div>
-            <div class="nav-item" data-tab="games">
-                <div class="nav-icon">🎮</div>
-                <span>Games</span>
-            </div>
-            <div class="nav-item" data-tab="profile">
-                <div class="nav-icon">👤</div>
-                <span>Profile</span>
-            </div>
+            <div class="nav-item active" data-tab="home"><div class="nav-icon">🏠</div><span>Home</span></div>
+            <div class="nav-item" data-tab="earn"><div class="nav-icon">💰</div><span>Earn</span></div>
+            <div class="nav-item" data-tab="games"><div class="nav-icon">🎮</div><span>Games</span></div>
+            <div class="nav-item" data-tab="profile"><div class="nav-icon">👤</div><span>Profile</span></div>
         </nav>
     </div>
 
-    <script>
-        // ==================== Configuration ====================
-        const API_BASE = 'https://telegram-task-app-coik.onrender.com'; 
-        const tg = window.Telegram?.WebApp;
-        
-        if (tg) {
-            tg.expand();
-            tg.ready();
-        }
+    <!-- Withdrawal Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-title">ငွေထုတ်ရန်</div>
+            <div class="payment-methods">
+                <div class="method-btn" data-method="kpay">💰 KPay</div>
+                <div class="method-btn" data-method="wavepay">🌊 WavePay</div>
+                <div class="method-btn" data-method="binance">📊 Binance</div>
+            </div>
+            <input type="text" class="input-field" id="accountInput" placeholder="အကောင့်နံပါတ် / ID">
+            <input type="number" class="input-field" id="amountInput" placeholder="ငွေပမာဏ (အနည်းဆုံး 1000)">
+            <div class="error-text" id="withdrawError">အနည်းဆုံးထုတ်ယူရန် 1000 coin လိုအပ်ပါသည်</div>
+            <button class="submit-btn" id="submitWithdraw">ထုတ်မည်</button>
+            <button class="close-btn" id="closeModal">ပိတ်မည်</button>
+        </div>
+    </div>
 
+    <script>
+        // Configuration
+        const API_BASE = 'https://telegram-task-app-coik.onrender.com';
+        const MIN_WITHDRAWAL = 1000;
+
+        const tg = window.Telegram?.WebApp;
+        if (tg) { tg.expand(); tg.ready(); }
         const initData = tg?.initData || '';
 
-        // ==================== Random Profile Avatar ====================
+        // Random avatars
         const avatarEmojis = ['🧑‍🎄', '🐻', '🐶', '🦊', '🐼', '🐨', '🦁', '🐸', '🐧', '🐱'];
-        
         function getRandomAvatar(userId) {
             if (!userId) return avatarEmojis[0];
             const hash = String(userId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             return avatarEmojis[hash % avatarEmojis.length];
         }
 
-        // DOM Elements
+        // DOM elements
         const headerAvatar = document.getElementById('headerAvatar');
         const profileAvatar = document.getElementById('profileAvatar');
-        const usernameSpan = document.getElementById('profileUsername');
         const welcomeUsername = document.getElementById('welcomeUsername');
+        const profileUsername = document.getElementById('profileUsername');
         const totalCoinsSpan = document.getElementById('totalCoins');
         const profileCoinsSpan = document.getElementById('profileCoins');
+        const joinDateSpan = document.getElementById('joinDate');
+        const referralCountSpan = document.getElementById('referralCount');
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
-        
-        // Withdrawal Buttons (3 ခု)
         const homeWithdrawBtn = document.getElementById('homeWithdrawBtn');
         const profileWithdrawBtn = document.getElementById('profileWithdrawBtn');
-        
-        // Invite Buttons (2 ခု)
         const earnInviteBtn = document.getElementById('earnInviteBtn');
         const gamesInviteBtn = document.getElementById('gamesInviteBtn');
+        const modal = document.getElementById('withdrawModal');
+        const methodBtns = document.querySelectorAll('.method-btn');
+        const accountInput = document.getElementById('accountInput');
+        const amountInput = document.getElementById('amountInput');
+        const withdrawError = document.getElementById('withdrawError');
+        const submitWithdraw = document.getElementById('submitWithdraw');
+        const closeModal = document.getElementById('closeModal');
 
-        // ==================== Withdrawal Buttons ====================
-        const withdrawHandler = () => {
-            alert('💸 Withdrawal feature coming soon!\nငွေထုတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
-        };
-        homeWithdrawBtn.addEventListener('click', withdrawHandler);
-        profileWithdrawBtn.addEventListener('click', withdrawHandler);
+        let selectedMethod = 'kpay';
+        let currentUserId = null;
 
-        // ==================== Invite Buttons ====================
+        // Method selection
+        methodBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                methodBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedMethod = btn.dataset.method;
+            });
+        });
+        methodBtns[0].classList.add('selected');
+
+        // Open modal
+        function openWithdrawModal() {
+            modal.classList.add('active');
+            amountInput.value = '';
+            accountInput.value = '';
+            withdrawError.style.opacity = '0.5';
+        }
+        homeWithdrawBtn.addEventListener('click', openWithdrawModal);
+        profileWithdrawBtn.addEventListener('click', openWithdrawModal);
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // Submit withdrawal
+        submitWithdraw.addEventListener('click', async () => {
+            const amount = parseInt(amountInput.value);
+            const account = accountInput.value.trim();
+
+            if (!account) {
+                withdrawError.innerText = 'အကောင့်နံပါတ် ထည့်ပါ';
+                withdrawError.style.opacity = '1';
+                return;
+            }
+            if (isNaN(amount) || amount < MIN_WITHDRAWAL) {
+                withdrawError.innerText = `အနည်းဆုံး ${MIN_WITHDRAWAL} coin ထည့်ပါ`;
+                withdrawError.style.opacity = '1';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/withdraw`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Telegram-Init-Data': initData
+                    },
+                    body: JSON.stringify({
+                        method: selectedMethod,
+                        accountDetails: account,
+                        amount
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('ငွေထုတ်ရန် တောင်းဆိုမှု အောင်မြင်ပါသည်။ စီမံခန့်ခွဲသူများ စစ်ဆေးပါမည်။');
+                    modal.classList.remove('active');
+                    fetchUser(); // refresh balance
+                } else {
+                    withdrawError.innerText = data.error || 'Error';
+                    withdrawError.style.opacity = '1';
+                }
+            } catch (err) {
+                console.error(err);
+                withdrawError.innerText = 'Server error';
+                withdrawError.style.opacity = '1';
+            }
+        });
+
+        // Invite buttons
         const inviteHandler = () => {
-            alert('👥 Invite feature coming soon!\nမိတ်ဆွေဖိတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
+            const link = `https://t.me/YourBotUsername?start=${currentUserId}`; // replace with your bot username
+            navigator.clipboard.writeText(link).then(() => {
+                alert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။');
+            });
         };
         earnInviteBtn.addEventListener('click', inviteHandler);
         gamesInviteBtn.addEventListener('click', inviteHandler);
 
-        // ==================== Helper Functions ====================
+        // Helper functions
         function formatTime(ms) {
             if (ms < 0) ms = 0;
             const sec = Math.floor(ms / 1000);
@@ -717,99 +757,79 @@
             return `${h}:${m}:${s}`;
         }
 
-        // Number rolling animation
         function animateNumber(element, newValue) {
             const oldValue = parseInt(element.innerText.replace(/,/g, '')) || 0;
             if (oldValue === newValue) return;
-            
             let current = oldValue;
             const step = newValue > oldValue ? 1 : -1;
-            const interval = 5; // ms (ပိုမြန်အောင် 5ms)
-            const duration = 150; // ms (ပိုမြန်အောင် 150ms)
             const steps = Math.abs(newValue - oldValue);
-            const stepTime = steps > 0 ? duration / steps : 0;
-            
+            const stepTime = steps > 0 ? 150 / steps : 0;
             const timer = setInterval(() => {
                 current += step;
                 element.innerText = current.toLocaleString();
-                if (current === newValue) {
-                    clearInterval(timer);
-                }
+                if (current === newValue) clearInterval(timer);
             }, stepTime);
         }
 
-        // Update UI with user data from server
-        function updateUI(data) {
-            const displayName = data.username ? '@' + data.username : 'User';
-            usernameSpan.innerText = displayName;
-            welcomeUsername.innerText = displayName;
-
-            // Set random avatar based on user ID (for both header and profile)
-            if (data.userId) {
-                const avatar = getRandomAvatar(data.userId);
-                headerAvatar.innerText = avatar;
-                profileAvatar.innerText = avatar;
-            }
-
-            // Animate coin update
-            animateNumber(totalCoinsSpan, data.coins);
-            animateNumber(profileCoinsSpan, data.coins);
-
-            const now = Date.now();
-            const dailyLast = data.dailyLastClaim || 0;
-            const dailyRemaining = (24 * 60 * 60 * 1000) - (now - dailyLast);
-
-            if (dailyRemaining > 0 && dailyLast !== 0) {
-                dailyBtn.disabled = true;
-                dailyBtn.innerText = formatTime(dailyRemaining);
-            } else {
-                dailyBtn.disabled = false;
-                dailyBtn.innerText = 'Check-in';
-            }
-
-            taskBtns.forEach(btn => {
-                const taskId = btn.dataset.id;
-                const last = data.tasks?.[taskId] || 0;
-                const remaining = (2 * 60 * 60 * 1000) - (now - last);
-
-                if (remaining > 0 && last !== 0) {
-                    btn.disabled = true;
-                    btn.innerText = formatTime(remaining);
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = 'Get +30';
-                }
-            });
-        }
-
-        // Fetch user data from backend (ပိုမြန်အောင် no cache)
         async function fetchUser() {
             try {
                 const res = await fetch(`${API_BASE}/api/user`, {
-                    headers: { 
-                        'X-Telegram-Init-Data': initData,
-                        'Cache-Control': 'no-cache'
-                    }
+                    headers: { 'X-Telegram-Init-Data': initData, 'Cache-Control': 'no-cache' }
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    updateUI(data);
-                    startLocalTimers(data);
+                    currentUserId = data.userId;
+                    const displayName = data.username ? '@' + data.username : 'User';
+                    welcomeUsername.innerText = displayName;
+                    profileUsername.innerText = displayName;
+
+                    const avatar = getRandomAvatar(data.userId);
+                    headerAvatar.innerText = avatar;
+                    profileAvatar.innerText = avatar;
+
+                    animateNumber(totalCoinsSpan, data.coins);
+                    animateNumber(profileCoinsSpan, data.coins);
+
+                    if (data.createdAt) {
+                        joinDateSpan.innerText = new Date(data.createdAt).toLocaleDateString();
+                    }
+                    referralCountSpan.innerText = data.referralCount || 0;
+
+                    const now = Date.now();
+                    const dailyLast = data.dailyLastClaim || 0;
+                    const dailyRemaining = (24 * 3600000) - (now - dailyLast);
+                    if (dailyRemaining > 0 && dailyLast !== 0) {
+                        dailyBtn.disabled = true;
+                        dailyBtn.innerText = formatTime(dailyRemaining);
+                    } else {
+                        dailyBtn.disabled = false;
+                        dailyBtn.innerText = 'Check-in';
+                    }
+
+                    taskBtns.forEach(btn => {
+                        const taskId = btn.dataset.id;
+                        const last = data.tasks?.[taskId] || 0;
+                        const remaining = (2 * 3600000) - (now - last);
+                        if (remaining > 0 && last !== 0) {
+                            btn.disabled = true;
+                            btn.innerText = formatTime(remaining);
+                        } else {
+                            btn.disabled = false;
+                            btn.innerText = 'Get +30';
+                        }
+                    });
                 }
             } catch (err) {
-                console.error('Fetch user error:', err);
+                console.error(err);
             }
         }
 
-        // Start local countdowns
         function startLocalTimers(data) {
             const now = Date.now();
             const dailyLast = data.dailyLastClaim || 0;
-            const dailyRemaining = (24 * 60 * 60 * 1000) - (now - dailyLast);
-
-            if (dailyRemaining > 0 && dailyLast !== 0) {
+            if (dailyLast && (24 * 3600000) - (now - dailyLast) > 0) {
                 const updateDaily = () => {
-                    const remaining = (24 * 60 * 60 * 1000) - (Date.now() - dailyLast);
+                    const remaining = (24 * 3600000) - (Date.now() - dailyLast);
                     if (remaining <= 0) {
                         dailyBtn.disabled = false;
                         dailyBtn.innerText = 'Check-in';
@@ -821,15 +841,12 @@
                 };
                 updateDaily();
             }
-
             taskBtns.forEach(btn => {
                 const taskId = btn.dataset.id;
                 const last = data.tasks?.[taskId] || 0;
-                const remaining = (2 * 60 * 60 * 1000) - (now - last);
-
-                if (remaining > 0 && last !== 0) {
+                if (last && (2 * 3600000) - (now - last) > 0) {
                     const updateTask = () => {
-                        const remaining = (2 * 60 * 60 * 1000) - (Date.now() - last);
+                        const remaining = (2 * 3600000) - (Date.now() - last);
                         if (remaining <= 0) {
                             btn.disabled = false;
                             btn.innerText = 'Get +30';
@@ -844,29 +861,19 @@
             });
         }
 
-        // Daily claim (ပိုမြန်အောင်)
         dailyBtn.addEventListener('click', async () => {
             if (dailyBtn.disabled) return;
             try {
                 const res = await fetch(`${API_BASE}/api/claim/daily`, {
                     method: 'POST',
-                    headers: { 
-                        'X-Telegram-Init-Data': initData,
-                        'Cache-Control': 'no-cache'
-                    }
+                    headers: { 'X-Telegram-Init-Data': initData }
                 });
                 const data = await res.json();
-                if (res.ok) {
-                    fetchUser(); // refresh all
-                } else {
-                    alert(data.error || 'Claim failed');
-                }
-            } catch (err) {
-                console.error('Daily claim error:', err);
-            }
+                if (res.ok) fetchUser();
+                else alert(data.error);
+            } catch (err) { console.error(err); }
         });
 
-        // Task claim (ပိုမြန်အောင်)
         taskBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (btn.disabled) return;
@@ -874,24 +881,16 @@
                 try {
                     const res = await fetch(`${API_BASE}/api/claim/task/${taskId}`, {
                         method: 'POST',
-                        headers: { 
-                            'X-Telegram-Init-Data': initData,
-                            'Cache-Control': 'no-cache'
-                        }
+                        headers: { 'X-Telegram-Init-Data': initData }
                     });
                     const data = await res.json();
-                    if (res.ok) {
-                        fetchUser();
-                    } else {
-                        alert(data.error || 'Claim failed');
-                    }
-                } catch (err) {
-                    console.error('Task claim error:', err);
-                }
+                    if (res.ok) fetchUser();
+                    else alert(data.error);
+                } catch (err) { console.error(err); }
             });
         });
 
-        // ==================== Tab Navigation ====================
+        // Tab navigation
         const navItems = document.querySelectorAll('.nav-item');
         const sections = {
             home: document.getElementById('homeSection'),
@@ -899,24 +898,13 @@
             games: document.getElementById('gamesSection'),
             profile: document.getElementById('profileSection')
         };
-
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
-
                 Object.values(sections).forEach(s => s.classList.remove('active'));
                 const tab = item.dataset.tab;
                 if (sections[tab]) sections[tab].classList.add('active');
-            });
-        });
-
-        // ==================== Entrance Animation ====================
-        window.addEventListener('load', () => {
-            const greetingElements = document.querySelectorAll('.greeting-row, .username-badge, .animated-text-container');
-            greetingElements.forEach((el, index) => {
-                el.style.opacity = '0';
-                el.style.animation = `fadeSlide 0.3s ease ${index * 0.1 + 0.2}s forwards`;
             });
         });
 
