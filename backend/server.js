@@ -6,14 +6,14 @@ const crypto = require('crypto');
 
 const app = express();
 
-// CORS - ခင်ဗျား Frontend URL ကိုပဲ ခွင့်ပြုမယ်
+// CORS - Frontend URL ကိုပဲ ခွင့်ပြုမယ်
 app.use(cors({
     origin: process.env.FRONTEND_URL || '*',
     credentials: true
 }));
 app.use(express.json());
 
-// MongoDB Schema
+// ==================== MongoDB Schema ====================
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// Telegram initData validation
+// ==================== Telegram Validation ====================
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
 function validateTelegramData(initData) {
@@ -45,7 +45,7 @@ function validateTelegramData(initData) {
     return calculatedHash === hash ? Object.fromEntries(params) : null;
 }
 
-// Middleware: Validate user from initData
+// ==================== Auth Middleware ====================
 async function authMiddleware(req, res, next) {
     const initData = req.headers['x-telegram-init-data'];
     if (!initData) {
@@ -62,7 +62,7 @@ async function authMiddleware(req, res, next) {
     next();
 }
 
-// Helper: Get or create user
+// ==================== Helper Functions ====================
 async function getUser(userId, username) {
     let user = await User.findOne({ userId });
     if (!user) {
@@ -72,7 +72,9 @@ async function getUser(userId, username) {
     return user;
 }
 
-// Routes
+// ==================== Routes ====================
+app.get('/health', (req, res) => res.send('OK'));
+
 app.get('/api/user', authMiddleware, async (req, res) => {
     try {
         const user = await getUser(req.tgUser.id, req.tgUser.username);
@@ -84,6 +86,7 @@ app.get('/api/user', authMiddleware, async (req, res) => {
             tasks: Object.fromEntries(user.tasks)
         });
     } catch (err) {
+        console.error('❌ /api/user error:', err.message);
         res.status(500).json({ error: 'Database error' });
     }
 });
@@ -107,6 +110,7 @@ app.post('/api/claim/daily', authMiddleware, async (req, res) => {
 
         res.json({ coins: user.coins, dailyLastClaim: user.dailyLastClaim });
     } catch (err) {
+        console.error('❌ /api/claim/daily error:', err.message);
         res.status(500).json({ error: 'Database error' });
     }
 });
@@ -132,15 +136,27 @@ app.post('/api/claim/task/:taskId', authMiddleware, async (req, res) => {
 
         res.json({ coins: user.coins, tasks: Object.fromEntries(user.tasks) });
     } catch (err) {
+        console.error('❌ /api/claim/task error:', err.message);
         res.status(500).json({ error: 'Database error' });
     }
 });
 
-app.get('/health', (req, res) => res.send('OK'));
-
+// ==================== Start Server ====================
 const PORT = process.env.PORT || 5000;
+
+if (!process.env.MONGODB_URI) {
+    console.error('❌ MONGODB_URI is not defined in environment variables');
+    process.exit(1);
+}
+
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        console.log('✅ MongoDB connected successfully');
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
     })
-    .catch(err => console.error('MongoDB error:', err));
+    .catch(err => {
+        console.error('❌ MongoDB connection error:', err.message);
+        process.exit(1);
+    });
