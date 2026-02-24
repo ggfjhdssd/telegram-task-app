@@ -165,12 +165,19 @@
         .section.active { display: block; }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile (No withdrawal button) */
+        /* Profile - With Button Below */
         .profile-premium {
             background: rgba(20,22,30,0.7); backdrop-filter: blur(12px); border-radius: 32px; padding: 24px;
-            text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 0;
+            text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 16px;
         }
         .avatar-large { width: 80px; height: 80px; background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 44px; margin: 0 auto 16px; box-shadow: 0 15px 25px rgba(255,215,0,0.3); }
+        .profile-withdraw {
+            background: linear-gradient(135deg, #00b09b, #96c93d); border: none; padding: 16px 20px; border-radius: 40px;
+            color: white; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
+            border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s;
+        }
+        .profile-withdraw:active { transform: scale(0.97); }
+
         .placeholder { text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 28px; color: #5e5e71; border: 1px dashed rgba(255,215,0,0.2); }
     </style>
 </head>
@@ -233,7 +240,7 @@
             <div class="task-card"><div class="task-icon coin-sway">🪙</div><div class="task-info"><h4>Task 5</h4><p>+30 coins</p></div><button class="btn-modern task-btn" data-id="task5">Get +30</button></div>
         </div>
 
-        <!-- Earn Section -->
+        <!-- Earn Section (No Withdrawal Button) -->
         <div id="earnSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700;">💰 Earn More</h2>
@@ -245,7 +252,7 @@
             </button>
         </div>
 
-        <!-- Games Section -->
+        <!-- Games Section (No Withdrawal Button) -->
         <div id="gamesSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700;">🎮 Play & Earn</h2>
@@ -257,7 +264,7 @@
             </button>
         </div>
 
-        <!-- Profile Section (No withdrawal button) -->
+        <!-- Profile Section (User Info on Top, Withdrawal Below) -->
         <div id="profileSection" class="section">
             <div class="profile-premium">
                 <div class="avatar-large" id="profileAvatar">💰</div>
@@ -266,6 +273,9 @@
                 <p style="color:#8e8e9d;">Joined: <span id="joinDate">2026-02-24</span></p>
                 <p style="color:#8e8e9d;">Referrals: <span id="referralCount">0</span></p>
             </div>
+            <button class="profile-withdraw" id="profileWithdrawBtn">
+                <span>💸</span> WITHDRAWAL MONEY
+            </button>
         </div>
 
         <!-- Navigation -->
@@ -323,6 +333,7 @@
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
         const homeWithdrawBtn = document.getElementById('homeWithdrawBtn');
+        const profileWithdrawBtn = document.getElementById('profileWithdrawBtn');
         const earnInviteBtn = document.getElementById('earnInviteBtn');
         const gamesInviteBtn = document.getElementById('gamesInviteBtn');
         const inviteBox = document.getElementById('inviteBox');
@@ -347,7 +358,7 @@
         });
         methodBtns[0].classList.add('selected');
 
-        // Open modal
+        // Open modal (for both home and profile buttons)
         function openWithdrawModal() {
             modal.classList.add('active');
             amountInput.value = '';
@@ -355,6 +366,7 @@
             withdrawError.style.opacity = '0.5';
         }
         homeWithdrawBtn.addEventListener('click', openWithdrawModal);
+        profileWithdrawBtn.addEventListener('click', openWithdrawModal);
 
         // Close modal
         closeModal.addEventListener('click', () => modal.classList.remove('active'));
@@ -404,13 +416,13 @@
             }
         });
 
-        // Invite link copy function
+        // Invite link copy function (updated with correct bot username)
         function copyInviteLink() {
             if (!currentUserId) {
                 alert('User ID not ready');
                 return;
             }
-            const link = `https://t.me/YourBotUsername?start=${currentUserId}`; // ← replace with your bot username
+            const link = `https://t.me/paycoinmm_bot?start=${currentUserId}`;
             navigator.clipboard.writeText(link).then(() => {
                 tg?.showAlert ? tg.showAlert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။') : alert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။');
             }).catch(() => {
