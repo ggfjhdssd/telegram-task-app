@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     tasks: { type: Map, of: Number, default: {} },
     referredBy: { type: Number, default: null },
     referralCount: { type: Number, default: 0 },
-    createdAt: { type: Date, default: Date.now, expires: '1y' }, // auto-delete after 1 year? Not exactly, but we can clean manually
+    createdAt: { type: Date, default: Date.now },
     banned: { type: Boolean, default: false }
 });
 
@@ -80,6 +80,41 @@ app.post('/webhook', express.json(), (req, res) => {
     bot.processUpdate(req.body);
     res.sendStatus(200);
 });
+
+// ==================== Helper Functions ====================
+function validateTelegramData(initData) {
+    const BOT_TOKEN = process.env.BOT_TOKEN;
+    if (!initData || !BOT_TOKEN) return null;
+    const params = new URLSearchParams(initData);
+    const hash = params.get('hash');
+    params.delete('hash');
+    const dataCheckString = Array.from(params.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n');
+    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(BOT_TOKEN).digest();
+    const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+    return calculatedHash === hash ? Object.fromEntries(params) : null;
+}
+
+async function authMiddleware(req, res, next) {
+    const initData = req.headers['x-telegram-init-data'];
+    if (!initData) return res.status(401).json({ error: 'Missing init data' });
+    const userData = validateTelegramData(initData);
+    if (!userData || !userData.user) return res.status(403).json({ error: 'Invalid init data' });
+    const tgUser = JSON.parse(userData.user);
+    req.tgUser = tgUser;
+    next();
+}
+
+async function getUser(userId, username) {
+    let user = await User.findOne({ userId });
+    if (!user) {
+        user = new User({ userId, username: username || '' });
+        await user.save();
+    }
+    return user;
+}
 
 // ==================== Bot Commands ====================
 
@@ -223,41 +258,6 @@ bot.onText(/\/reject (\w+)/, async (msg, match) => {
         bot.sendMessage(msg.chat.id, `Withdrawal ${withdrawalId} rejected and refunded.`);
     }
 });
-
-// ==================== Helper: Validate Telegram Data ====================
-function validateTelegramData(initData) {
-    const BOT_TOKEN = process.env.BOT_TOKEN;
-    if (!initData || !BOT_TOKEN) return null;
-    const params = new URLSearchParams(initData);
-    const hash = params.get('hash');
-    params.delete('hash');
-    const dataCheckString = Array.from(params.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
-        .join('\n');
-    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(BOT_TOKEN).digest();
-    const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
-    return calculatedHash === hash ? Object.fromEntries(params) : null;
-}
-
-async function authMiddleware(req, res, next) {
-    const initData = req.headers['x-telegram-init-data'];
-    if (!initData) return res.status(401).json({ error: 'Missing init data' });
-    const userData = validateTelegramData(initData);
-    if (!userData || !userData.user) return res.status(403).json({ error: 'Invalid init data' });
-    const tgUser = JSON.parse(userData.user);
-    req.tgUser = tgUser;
-    next();
-}
-
-async function getUser(userId, username) {
-    let user = await User.findOne({ userId });
-    if (!user) {
-        user = new User({ userId, username: username || '' });
-        await user.save();
-    }
-    return user;
-}
 
 // ==================== API Routes ====================
 app.get('/health', (req, res) => res.send('OK'));
