@@ -165,18 +165,26 @@
         .section.active { display: block; }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile - With Button Below */
+        /* Profile - User Info on Top, Button Below */
         .profile-premium {
             background: rgba(20,22,30,0.7); backdrop-filter: blur(12px); border-radius: 32px; padding: 24px;
             text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 16px;
         }
         .avatar-large { width: 80px; height: 80px; background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 44px; margin: 0 auto 16px; box-shadow: 0 15px 25px rgba(255,215,0,0.3); }
-        .profile-withdraw {
-            background: linear-gradient(135deg, #00b09b, #96c93d); border: none; padding: 16px 20px; border-radius: 40px;
-            color: white; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
-            border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s;
+        .info-box {
+            background: rgba(0,0,0,0.2); border-radius: 20px; padding: 15px; margin-top: 15px; text-align: left;
         }
-        .profile-withdraw:active { transform: scale(0.97); }
+        .info-box p { color: #8e8e9d; font-size: 14px; margin-bottom: 5px; }
+        .info-box span { color: #fff; font-weight: 500; }
+
+        /* Withdraw Button in Profile */
+        .withdraw-profile-btn {
+            background: linear-gradient(135deg, #00b09b, #96c93d); border: none; padding: 16px; border-radius: 40px;
+            color: white; font-weight: 700; font-size: 16px; width: 100%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,176,155,0.2); transition: all 0.2s;
+        }
+        .withdraw-profile-btn:active { transform: scale(0.97); }
 
         .placeholder { text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 28px; color: #5e5e71; border: 1px dashed rgba(255,215,0,0.2); }
     </style>
@@ -264,17 +272,19 @@
             </button>
         </div>
 
-        <!-- Profile Section (User Info on Top, Withdrawal Below) -->
+        <!-- Profile Section (User Info on Top, Withdrawal Button Below) -->
         <div id="profileSection" class="section">
             <div class="profile-premium">
                 <div class="avatar-large" id="profileAvatar">💰</div>
                 <p style="font-size:20px; font-weight:600;" id="profileUsername">@username</p>
                 <p style="color:#ffd700; font-size:28px; font-weight:700; margin:8px 0;"><span id="profileCoins">0</span> 🪙</p>
-                <p style="color:#8e8e9d;">Joined: <span id="joinDate">2026-02-24</span></p>
-                <p style="color:#8e8e9d;">Referrals: <span id="referralCount">0</span></p>
+                <div class="info-box">
+                    <p>📅 Joined: <span id="joinDate">2026-02-24</span></p>
+                    <p>👥 Referrals: <span id="referralCount">0</span></p>
+                </div>
             </div>
-            <button class="profile-withdraw" id="profileWithdrawBtn">
-                <span>💸</span> WITHDRAWAL MONEY
+            <button class="withdraw-profile-btn" id="profileWithdrawBtn">
+                💸 WITHDRAWAL MONEY (ပိုက်ဆံထုတ်ရန်)
             </button>
         </div>
 
@@ -424,7 +434,11 @@
             }
             const link = `https://t.me/paycoinmm_bot?start=${currentUserId}`;
             navigator.clipboard.writeText(link).then(() => {
-                tg?.showAlert ? tg.showAlert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။') : alert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။');
+                if (tg && tg.showPopup) {
+                    tg.showPopup({ message: '🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။' });
+                } else {
+                    alert('🔗 ဖိတ်ခေါ်လင့်ကို ကူးယူပြီးပါပြီ။');
+                }
             }).catch(() => {
                 alert('Copy failed');
             });
