@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task App</title>
+    <title>PayCoinads</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', 'Inter', sans-serif;
         }
 
         body {
-            background: radial-gradient(circle at top right, #1a1a2e, #16213e, #0f0c29);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: white;
             display: flex;
             justify-content: center;
@@ -27,46 +27,87 @@
             padding: 20px 15px 100px;
         }
 
-        /* Welcome Card */
+        /* Welcome Card - လှပအောင် ဒီဇိုင်းပြုပြင်ထား */
         .welcome-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 25px 20px;
-            border-radius: 25px;
+            background: linear-gradient(145deg, #ffd700, #ffa500);
+            color: #1a1a2e;
+            padding: 30px 20px;
+            border-radius: 30px;
             margin-bottom: 25px;
             text-align: center;
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255,255,255,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: shine 5s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .welcome-card h1 {
-            font-size: 28px;
+            font-size: 40px;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
         }
 
-        .welcome-card p {
+        .welcome-card .username-big {
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 10px 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .welcome-card .welcome-text {
             font-size: 18px;
-            opacity: 0.9;
+            margin-top: 10px;
+            font-weight: 500;
+            color: #4a2c00;
         }
 
-        .play-button {
-            background: linear-gradient(135deg, #f6d365, #fda085);
-            color: #1a1a2e;
-            padding: 15px 30px;
+        /* Withdrawal Button */
+        .withdraw-button {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+            padding: 18px 30px;
             border-radius: 60px;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
             text-align: center;
-            margin: 20px 0;
+            margin: 20px 0 30px;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(253, 160, 133, 0.4);
+            box-shadow: 0 15px 30px rgba(0, 176, 155, 0.4);
             transition: all 0.3s;
             border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .play-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(253, 160, 133, 0.6);
+        .withdraw-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 176, 155, 0.6);
+        }
+
+        .withdraw-button:active {
+            transform: scale(0.98);
         }
 
         header {
@@ -74,6 +115,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .profile {
@@ -83,14 +129,14 @@
         }
 
         .avatar {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 15px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .username {
@@ -99,21 +145,16 @@
         }
 
         .coin-balance {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            padding: 10px 18px;
+            padding: 8px 15px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #ffd700;
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: bold;
-            animation: glow 2s infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #4facfe; }
-            100% { box-shadow: 0 0 20px #4facfe; }
+            color: #ffd700;
         }
 
         .card {
@@ -210,7 +251,7 @@
         }
 
         .nav-item.active {
-            color: #4facfe;
+            color: #ffd700;
         }
 
         .nav-item:hover {
@@ -257,61 +298,61 @@
         <!-- Header -->
         <header>
             <div class="profile">
-                <div class="avatar">🐱</div>
+                <div class="avatar">💰</div>
                 <div>
-                    <h4>Hello,</h4>
+                    <h4>PayCoinads</h4>
                     <span class="username" id="usernameDisplay">@username</span>
                 </div>
             </div>
             <div class="coin-balance">
                 <span>🪙</span>
-                <span id="totalCoins">1,250</span>
+                <span id="totalCoins">0</span>
             </div>
         </header>
 
-        <!-- Welcome Card (Start Message) -->
+        <!-- Welcome Card (အသစ်) -->
         <div class="welcome-card" id="welcomeCard">
-            <h1>မင်္ဂလာပါ 👋</h1>
-            <p id="welcomeUsername">@username</p>
-            <p>ဂိမ်းကစားရန် အောက်က Play ကိုနှိပ်ပါ</p>
+            <h1>မင်္ဂလာပါ 🖐️</h1>
+            <div class="username-big" id="welcomeUsername">@username</div>
+            <div class="welcome-text">PayCoinads မှ ကြိုဆိုပါတယ်</div>
         </div>
 
-        <!-- Play Button (Big) -->
-        <div class="play-button" id="playButton">
-            🎮 PLAY GAME
+        <!-- Withdrawal Button (ပိုက်ဆံထုတ်ရန်) -->
+        <div class="withdraw-button" id="withdrawBtn">
+            💰 WITHDRAWAL MONEY <br> (ပိုက်ဆံထုတ်ရန်)
         </div>
 
         <!-- Home Section -->
         <div id="homeSection" class="section active">
             <div class="card">
                 <div class="flame-icon">🔥</div>
-                <div class="task-title">Daily Check-in</div>
+                <div class="task-title">Daily Check-in (+15)</div>
                 <button class="btn" id="dailyBtn">Check-in</button>
             </div>
 
             <div class="card">
                 <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 1</div>
+                <div class="task-title">Task 1 (+30)</div>
                 <button class="btn task-btn" data-id="task1">Get +30</button>
             </div>
             <div class="card">
                 <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 2</div>
+                <div class="task-title">Task 2 (+30)</div>
                 <button class="btn task-btn" data-id="task2">Get +30</button>
             </div>
             <div class="card">
                 <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 3</div>
+                <div class="task-title">Task 3 (+30)</div>
                 <button class="btn task-btn" data-id="task3">Get +30</button>
             </div>
             <div class="card">
                 <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 4</div>
+                <div class="task-title">Task 4 (+30)</div>
                 <button class="btn task-btn" data-id="task4">Get +30</button>
             </div>
             <div class="card">
                 <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 5</div>
+                <div class="task-title">Task 5 (+30)</div>
                 <button class="btn task-btn" data-id="task5">Get +30</button>
             </div>
         </div>
@@ -319,7 +360,7 @@
         <!-- Earn Section -->
         <div id="earnSection" class="section">
             <div class="placeholder">
-                <h2>💰 Earn Coins</h2>
+                <h2>💰 Earn More Coins</h2>
                 <p>Watch ads & complete offers</p>
                 <p style="margin-top:20px;">Coming Soon...</p>
             </div>
@@ -337,10 +378,11 @@
         <!-- Profile Section -->
         <div id="profileSection" class="section">
             <div class="profile-info">
-                <div class="avatar" style="width:80px; height:80px; font-size:48px; margin:0 auto 20px;">🐱</div>
+                <div class="avatar" style="width:80px; height:80px; font-size:48px; margin:0 auto 20px;">💰</div>
                 <p><strong>Username:</strong> <span id="profileUsername">@username</span></p>
-                <p><strong>Coins:</strong> <span id="profileCoins">1,250</span></p>
+                <p><strong>Coins:</strong> <span id="profileCoins">0</span></p>
                 <p><strong>Member Since:</strong> 2026</p>
+                <p><strong>Platform:</strong> PayCoinads</p>
             </div>
         </div>
 
@@ -373,11 +415,11 @@
         const profileCoinsSpan = document.getElementById('profileCoins');
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
-        const playButton = document.getElementById('playButton');
+        const withdrawBtn = document.getElementById('withdrawBtn');
 
-        // ==================== Play Button Click ====================
-        playButton.addEventListener('click', () => {
-            alert('🎮 Game coming soon! မကြာခင် လာပါမယ်။');
+        // ==================== Withdrawal Button Click ====================
+        withdrawBtn.addEventListener('click', () => {
+            alert('💸 Withdrawal feature coming soon!\nငွေထုတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
         });
 
         // ==================== Helper Functions ====================
