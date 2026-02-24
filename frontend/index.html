@@ -25,7 +25,7 @@
         .glass-balance { background: linear-gradient(145deg, rgba(255,215,0,0.1), rgba(255,165,0,0.05)); backdrop-filter: blur(12px); padding: 8px 16px; border-radius: 40px; border: 1px solid rgba(255,215,0,0.3); display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: #ffd700; box-shadow: 0 4px 15px rgba(255,215,0,0.15); }
         .glass-balance span:first-child { font-size: 20px; }
 
-        /* Greeting Card */
+        /* Greeting Card with Two Columns */
         .greeting-card {
             background: linear-gradient(145deg, #1e1e2f, #2a2a3c); border-radius: 24px; padding: 18px 20px; margin-bottom: 20px;
             border: 1px solid rgba(255,215,0,0.2); box-shadow: 0 12px 30px rgba(0,0,0,0.5);
@@ -75,7 +75,7 @@
         .invite-box .big-number { font-size: 24px; font-weight: 700; color: #fff; }
         .invite-box .big-number span { font-size: 16px; color: #ffd700; }
 
-        /* Withdrawal Button (only in Home and Profile) */
+        /* Withdrawal Button (Home only) */
         .withdraw-home {
             background: linear-gradient(135deg, #00b09b, #96c93d); border: none; padding: 14px 20px; border-radius: 40px;
             color: white; font-weight: 700; font-size: 18px; text-align: center; margin: 0 0 20px 0; cursor: pointer;
@@ -83,11 +83,6 @@
             width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
         }
         .withdraw-home:active { transform: scale(0.97); }
-
-        .profile-withdraw {
-            background: linear-gradient(135deg, #00b09b, #96c93d); border: none; padding: 16px 20px; border-radius: 40px;
-            color: white; font-weight: 700; font-size: 18px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
-        }
 
         /* Task Cards */
         .task-card {
@@ -170,10 +165,10 @@
         .section.active { display: block; }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile */
+        /* Profile (No withdrawal button) */
         .profile-premium {
             background: rgba(20,22,30,0.7); backdrop-filter: blur(12px); border-radius: 32px; padding: 24px;
-            text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 20px;
+            text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 0;
         }
         .avatar-large { width: 80px; height: 80px; background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 44px; margin: 0 auto 16px; box-shadow: 0 15px 25px rgba(255,215,0,0.3); }
         .placeholder { text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 28px; color: #5e5e71; border: 1px dashed rgba(255,215,0,0.2); }
@@ -238,7 +233,7 @@
             <div class="task-card"><div class="task-icon coin-sway">🪙</div><div class="task-info"><h4>Task 5</h4><p>+30 coins</p></div><button class="btn-modern task-btn" data-id="task5">Get +30</button></div>
         </div>
 
-        <!-- Earn Section (no green button) -->
+        <!-- Earn Section -->
         <div id="earnSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700;">💰 Earn More</h2>
@@ -250,7 +245,7 @@
             </button>
         </div>
 
-        <!-- Games Section (no green button) -->
+        <!-- Games Section -->
         <div id="gamesSection" class="section">
             <div class="placeholder">
                 <h2 style="color:#ffd700;">🎮 Play & Earn</h2>
@@ -262,7 +257,7 @@
             </button>
         </div>
 
-        <!-- Profile Section (green button only here) -->
+        <!-- Profile Section (No withdrawal button) -->
         <div id="profileSection" class="section">
             <div class="profile-premium">
                 <div class="avatar-large" id="profileAvatar">💰</div>
@@ -271,9 +266,6 @@
                 <p style="color:#8e8e9d;">Joined: <span id="joinDate">2026-02-24</span></p>
                 <p style="color:#8e8e9d;">Referrals: <span id="referralCount">0</span></p>
             </div>
-            <button class="profile-withdraw" id="profileWithdrawBtn">
-                <span>💸</span> WITHDRAWAL MONEY
-            </button>
         </div>
 
         <!-- Navigation -->
@@ -295,7 +287,7 @@
                 <div class="method-btn" data-method="binance">📊 Binance</div>
             </div>
             <input type="text" class="input-field" id="accountInput" placeholder="အကောင့်နံပါတ် / ID">
-            <input type="number" class="input-field" id="amountInput" placeholder="ငွေပမာဏ">
+            <input type="number" class="input-field" id="amountInput" placeholder="ငွေပမာဏ (အနည်းဆုံး 1000)">
             <div class="error-text" id="withdrawError">အနည်းဆုံးထုတ်ယူရန် 1000 coin လိုအပ်ပါသည်</div>
             <button class="submit-btn" id="submitWithdraw">ထုတ်မည်</button>
             <button class="close-btn" id="closeModal">ပိတ်မည်</button>
@@ -305,6 +297,8 @@
     <script>
         // Configuration
         const API_BASE = 'https://telegram-task-app-coik.onrender.com';
+        const MIN_WITHDRAWAL = 1000;
+
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.expand(); tg.ready(); }
         const initData = tg?.initData || '';
@@ -329,7 +323,6 @@
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
         const homeWithdrawBtn = document.getElementById('homeWithdrawBtn');
-        const profileWithdrawBtn = document.getElementById('profileWithdrawBtn');
         const earnInviteBtn = document.getElementById('earnInviteBtn');
         const gamesInviteBtn = document.getElementById('gamesInviteBtn');
         const inviteBox = document.getElementById('inviteBox');
@@ -362,7 +355,6 @@
             withdrawError.style.opacity = '0.5';
         }
         homeWithdrawBtn.addEventListener('click', openWithdrawModal);
-        profileWithdrawBtn.addEventListener('click', openWithdrawModal);
 
         // Close modal
         closeModal.addEventListener('click', () => modal.classList.remove('active'));
@@ -377,8 +369,8 @@
                 withdrawError.style.opacity = '1';
                 return;
             }
-            if (isNaN(amount) || amount < 1000) {
-                withdrawError.innerText = 'အနည်းဆုံး 1000 coin ထည့်ပါ';
+            if (isNaN(amount) || amount < MIN_WITHDRAWAL) {
+                withdrawError.innerText = `အနည်းဆုံး ${MIN_WITHDRAWAL} coin ထည့်ပါ`;
                 withdrawError.style.opacity = '1';
                 return;
             }
@@ -508,7 +500,6 @@
             }
         }
 
-        // Start timers
         function startLocalTimers(data) {
             const now = Date.now();
             const dailyLast = data.dailyLastClaim || 0;
