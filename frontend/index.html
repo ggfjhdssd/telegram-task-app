@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pyidaungsu&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             font-family: 'Inter', 'Pyidaungsu', sans-serif; 
             background: #0a0b0e; 
@@ -188,7 +188,15 @@
         /* Navigation Floating Effect */
         .floating-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 380px; background: rgba(15,17,22,0.85); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px; border-radius: 30px; border: 1px solid rgba(255,215,0,0.15); z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #5e5e71; font-size: 11px; cursor: pointer; padding: 8px 15px; border-radius: 20px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); font-weight: 600;}
-        .nav-item.active { color: #ffd700; background: rgba(255,215,0,0.15); transform: translateY(-4px); box-shadow: 0 4px 10px rgba(255,215,0,0.1); }
+        
+        .nav-item.active { 
+            color: #ffd700; 
+            background: #2a2718; 
+            transform: translateY(-4px); 
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); 
+            border: 0.5px solid rgba(255, 215, 0, 0.3); 
+        }
+        
         .nav-icon { font-size: 20px; margin-bottom: 4px; transition: 0.3s; }
         .nav-item.active .nav-icon { transform: scale(1.1); }
         
