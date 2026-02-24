@@ -56,7 +56,7 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         
         .brand { display: flex; align-items: center; gap: 12px; }
-        .header-avatar { width: 40px; height: 40px; background: linear-gradient(145deg, #2a2a3c, #1a1a28); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid rgba(255,215,0,0.3); }
+        .header-avatar { width: 40px; height: 40px; background: linear-gradient(145deg, #2a2a3c, #1a1a28); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid rgba(255,215,0,0.3); overflow: hidden; }
         
         /* Kinetic Typography Effect for Brand */
         .brand-text h4 { 
@@ -148,7 +148,7 @@
 
         /* Profile Styles */
         .profile-card { background: rgba(20,22,30,0.7); backdrop-filter: blur(10px); border-radius: 32px; padding: 24px; text-align: center; border: 1px solid rgba(255,215,0,0.15); margin-bottom: 20px; animation: fadeIn 0.5s ease; }
-        .avatar-large { width: 90px; height: 90px; background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 44px; margin: 0 auto 16px; box-shadow: 0 10px 25px rgba(255,215,0,0.4); border: 3px solid rgba(255,255,255,0.1); }
+        .avatar-large { width: 90px; height: 90px; background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 44px; margin: 0 auto 16px; box-shadow: 0 10px 25px rgba(255,215,0,0.4); border: 3px solid rgba(255,255,255,0.1); overflow: hidden; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
         .stat-item { background: rgba(255,255,255,0.03); padding: 14px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
         .stat-item:hover { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
@@ -417,6 +417,18 @@
                     document.getElementById('profileCoins').innerText = data.coins.toLocaleString();
                     document.getElementById('referralCount').innerText = data.referralCount || 0;
                     if (data.createdAt) document.getElementById('joinDate').innerText = new Date(data.createdAt).toLocaleDateString();
+
+                    // ================= Profile ပုံ ချိတ်ဆက်သည့်အပိုင်း =================
+                    if (data.photoUrl) {
+                        const imgTag = `<img src="${data.photoUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: none;" alt="Profile">`;
+                        document.getElementById('headerAvatar').innerHTML = imgTag;
+                        document.getElementById('profileAvatar').innerHTML = imgTag;
+                    } else {
+                        // Profile ပုံ မရှိပါက ပုံမှန်အတိုင်း ပြထားရန်
+                        document.getElementById('headerAvatar').innerHTML = '👤';
+                        document.getElementById('profileAvatar').innerHTML = '👤';
+                    }
+                    // =============================================================
 
                     // Update Timers
                     updateTimers(data);
