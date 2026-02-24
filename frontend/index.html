@@ -3,395 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayCoinads</title>
+    <title>PayCoinAds • Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pyidaungsu&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', 'Inter', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: white;
+            font-family: 'Inter', 'Pyidaungsu', sans-serif;
+            background: #0a0b0e;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            line-height: 1.5;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
-            padding: 20px 15px 100px;
-        }
-
-        /* Welcome Card - လှပအောင် ဒီဇိုင်းပြုပြင်ထား */
-        .welcome-card {
-            background: linear-gradient(145deg, #ffd700, #ffa500);
-            color: #1a1a2e;
-            padding: 30px 20px;
-            border-radius: 30px;
-            margin-bottom: 25px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
-            border: 2px solid rgba(255,255,255,0.5);
+            padding: 16px 12px 90px;
             position: relative;
-            overflow: hidden;
         }
 
-        .welcome-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            animation: shine 5s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .welcome-card h1 {
-            font-size: 40px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        }
-
-        .welcome-card .username-big {
-            font-size: 24px;
-            font-weight: bold;
-            background: rgba(255,255,255,0.3);
-            padding: 8px 20px;
-            border-radius: 50px;
-            display: inline-block;
-            margin: 10px 0;
-            backdrop-filter: blur(5px);
-        }
-
-        .welcome-card .welcome-text {
-            font-size: 18px;
-            margin-top: 10px;
-            font-weight: 500;
-            color: #4a2c00;
-        }
-
-        /* Withdrawal Button */
-        .withdraw-button {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: white;
-            padding: 18px 30px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 22px;
-            text-align: center;
-            margin: 20px 0 30px;
-            cursor: pointer;
-            box-shadow: 0 15px 30px rgba(0, 176, 155, 0.4);
-            transition: all 0.3s;
-            border: 2px solid rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .withdraw-button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 176, 155, 0.6);
-        }
-
-        .withdraw-button:active {
-            transform: scale(0.98);
-        }
-
-        header {
+        /* ==================== Premium Header ==================== */
+        .premium-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 10px 15px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            background: rgba(20, 22, 27, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 10px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
-        .profile {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, #ffd700, #ffb347);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
         }
 
-        .username {
-            font-size: 14px;
-            color: #a0a0a0;
+        .brand-text h4 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .coin-balance {
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            padding: 8px 15px;
-            border-radius: 30px;
-            border: 1px solid #ffd700;
+        .brand-text span {
+            font-size: 12px;
+            color: #8e8e9d;
+        }
+
+        /* ==================== Glassmorphism Balance ==================== */
+        .glass-balance {
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 18px;
             color: #ffd700;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
         }
 
-        .card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
+        .glass-balance span:first-child {
+            font-size: 20px;
+        }
+
+        /* ==================== Compact Greeting Card ==================== */
+        .greeting-compact {
+            background: linear-gradient(145deg, #1e1e2f, #2a2a3c);
+            border-radius: 24px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            animation: slideFadeIn 0.6s ease-out;
+        }
+
+        .greeting-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .wave-emoji {
+            font-size: 32px;
+            animation: wave 2s infinite;
+            transform-origin: 70% 70%;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .greeting-text {
+            font-size: 22px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffffff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .username-badge {
+            background: rgba(255, 215, 0, 0.15);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ffd700;
+            display: inline-block;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .welcome-message {
+            font-size: 15px;
+            color: #b0b0c0;
+            margin-top: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .welcome-message strong {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        /* ==================== Refined Withdrawal Button ==================== */
+        .withdraw-premium {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            margin: 0 auto 30px;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(0, 176, 155, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 85%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            letter-spacing: 1px;
+            transform: scale(1);
+        }
+
+        .withdraw-premium:active {
+            transform: scale(0.97);
+            box-shadow: 0 6px 15px rgba(0, 176, 155, 0.4);
+        }
+
+        .withdraw-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 30px rgba(0, 176, 155, 0.4);
+        }
+
+        /* ==================== Task Cards ==================== */
+        .task-card {
+            background: rgba(25, 27, 35, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 15px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(79,172,254,0.3);
+        .task-card:hover {
+            border-color: rgba(255, 215, 0, 0.2);
+            transform: translateX(4px);
         }
 
-        .flame-icon {
-            font-size: 40px;
-            animation: burn 1s infinite alternate;
+        .task-icon {
+            font-size: 36px;
+            filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.2));
         }
 
-        @keyframes burn {
+        /* Pulse animation for flame */
+        .flame-pulse {
+            animation: flameGlow 1.5s infinite alternate;
+        }
+
+        @keyframes flameGlow {
             0% { filter: drop-shadow(0 0 5px #ff4500); transform: scale(1); }
-            100% { filter: drop-shadow(0 0 20px #ffae00); transform: scale(1.1); }
+            100% { filter: drop-shadow(0 0 20px #ff8c00); transform: scale(1.08); }
         }
 
-        .coin-icon {
-            font-size: 40px;
+        /* Sway for coin */
+        .coin-sway {
             animation: sway 2.5s infinite ease-in-out;
         }
 
         @keyframes sway {
-            0% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-            100% { transform: rotate(-10deg); }
+            0% { transform: rotate(-8deg); }
+            50% { transform: rotate(8deg); }
+            100% { transform: rotate(-8deg); }
         }
 
-        .task-title {
+        .task-info {
             flex: 1;
-            margin-left: 20px;
-            font-weight: 600;
+            margin-left: 16px;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            border: none;
-            padding: 10px 16px;
-            border-radius: 12px;
-            color: white;
+        .task-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .task-info p {
+            font-size: 12px;
+            color: #8e8e9d;
+        }
+
+        .btn-modern {
+            background: linear-gradient(135deg, #2b2b3b, #1e1e2a);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #ffd700;
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            min-width: 85px;
-            transition: all 0.2s;
+            transition: all 0.15s ease;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .btn:hover:not(:disabled) {
-            transform: scale(1.02);
-            box-shadow: 0 8px 18px rgba(58,123,213,0.6);
+        .btn-modern:active:not(:disabled) {
+            transform: scale(0.94);
+            background: #2b2b3b;
         }
 
-        .btn:disabled {
-            background: rgba(255,255,255,0.1);
-            color: #888;
+        .btn-modern:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
+            background: #1a1a24;
+            color: #6b6b7a;
+            border-color: transparent;
         }
 
-        nav {
+        /* ==================== Floating Navigation ==================== */
+        .floating-nav {
             position: fixed;
-            bottom: 15px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 380px;
-            background: rgba(10,10,25,0.85);
-            backdrop-filter: blur(15px);
+            background: rgba(15, 17, 22, 0.8);
+            backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-around;
-            padding: 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 8px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            z-index: 1000;
         }
 
         .nav-item {
-            text-align: center;
-            color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #5e5e71;
             font-size: 11px;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 4px 12px;
+            border-radius: 30px;
         }
 
         .nav-item.active {
             color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
         }
 
-        .nav-item:hover {
-            color: #fda085;
-            transform: translateY(-2px);
+        .nav-item.active .nav-icon {
+            filter: drop-shadow(0 0 8px #ffd700);
         }
 
         .nav-icon {
-            font-size: 20px;
+            font-size: 22px;
             margin-bottom: 4px;
         }
 
+        /* ==================== Sections ==================== */
         .section {
             display: none;
+            animation: fadeSlide 0.3s ease;
         }
 
         .section.active {
             display: block;
         }
 
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== Profile & Placeholders ==================== */
         .placeholder {
             text-align: center;
-            padding: 50px 20px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            color: #aaa;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 28px;
+            color: #5e5e71;
+            border: 1px dashed rgba(255,215,0,0.2);
         }
 
-        .profile-info {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 20px;
+        .profile-premium {
+            background: rgba(20, 22, 30, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 24px;
             text-align: center;
+            border: 1px solid rgba(255,215,0,0.15);
         }
 
-        .profile-info p {
-            margin: 10px 0;
-            font-size: 18px;
+        .profile-premium .avatar-large {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #ffd700, #ffa500);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            margin: 0 auto 16px;
+            box-shadow: 0 15px 25px rgba(255,215,0,0.3);
+        }
+
+        /* ==================== Animations ==================== */
+        @keyframes slideFadeIn {
+            0% { opacity: 0; transform: translateY(-15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Number roll effect */
+        .roll-number {
+            display: inline-block;
+            transition: all 0.2s ease;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <header>
-            <div class="profile">
-                <div class="avatar">💰</div>
-                <div>
-                    <h4>PayCoinads</h4>
-                    <span class="username" id="usernameDisplay">@username</span>
+        <!-- Premium Header -->
+        <div class="premium-header">
+            <div class="brand">
+                <div class="brand-icon">💰</div>
+                <div class="brand-text">
+                    <h4>PayCoinAds</h4>
+                    <span>earn & withdraw</span>
                 </div>
             </div>
-            <div class="coin-balance">
+            <div class="glass-balance" id="balanceDisplay">
                 <span>🪙</span>
                 <span id="totalCoins">0</span>
             </div>
-        </header>
-
-        <!-- Welcome Card (အသစ်) -->
-        <div class="welcome-card" id="welcomeCard">
-            <h1>မင်္ဂလာပါ 🖐️</h1>
-            <div class="username-big" id="welcomeUsername">@username</div>
-            <div class="welcome-text">PayCoinads မှ ကြိုဆိုပါတယ်</div>
         </div>
 
-        <!-- Withdrawal Button (ပိုက်ဆံထုတ်ရန်) -->
-        <div class="withdraw-button" id="withdrawBtn">
-            💰 WITHDRAWAL MONEY <br> (ပိုက်ဆံထုတ်ရန်)
+        <!-- Compact Greeting Card -->
+        <div class="greeting-compact" id="greetingCard">
+            <div class="greeting-row">
+                <span class="wave-emoji">🖐️</span>
+                <span class="greeting-text" id="animatedGreeting">မင်္ဂလာပါ</span>
+            </div>
+            <div class="username-badge" id="welcomeUsername">@username</div>
+            <div class="welcome-message">
+                <strong>PayCoinAds</strong> မှ ကြိုဆိုပါတယ်
+            </div>
         </div>
+
+        <!-- Refined Withdrawal Button -->
+        <button class="withdraw-premium" id="withdrawBtn">
+            <span>💸</span> WITHDRAWAL MONEY <span>(ပိုက်ဆံထုတ်ရန်)</span>
+        </button>
 
         <!-- Home Section -->
         <div id="homeSection" class="section active">
-            <div class="card">
-                <div class="flame-icon">🔥</div>
-                <div class="task-title">Daily Check-in (+15)</div>
-                <button class="btn" id="dailyBtn">Check-in</button>
+            <!-- Daily Check-in Card -->
+            <div class="task-card">
+                <div class="task-icon flame-pulse">🔥</div>
+                <div class="task-info">
+                    <h4>Daily Check-in</h4>
+                    <p>+15 coins every 24h</p>
+                </div>
+                <button class="btn-modern" id="dailyBtn">Check-in</button>
             </div>
 
-            <div class="card">
-                <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 1 (+30)</div>
-                <button class="btn task-btn" data-id="task1">Get +30</button>
+            <!-- Task 1 -->
+            <div class="task-card">
+                <div class="task-icon coin-sway">🪙</div>
+                <div class="task-info">
+                    <h4>Task 1</h4>
+                    <p>+30 coins · 2h cooldown</p>
+                </div>
+                <button class="btn-modern task-btn" data-id="task1">Get +30</button>
             </div>
-            <div class="card">
-                <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 2 (+30)</div>
-                <button class="btn task-btn" data-id="task2">Get +30</button>
+            <!-- Task 2 -->
+            <div class="task-card">
+                <div class="task-icon coin-sway">🪙</div>
+                <div class="task-info">
+                    <h4>Task 2</h4>
+                    <p>+30 coins · 2h cooldown</p>
+                </div>
+                <button class="btn-modern task-btn" data-id="task2">Get +30</button>
             </div>
-            <div class="card">
-                <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 3 (+30)</div>
-                <button class="btn task-btn" data-id="task3">Get +30</button>
+            <!-- Task 3 -->
+            <div class="task-card">
+                <div class="task-icon coin-sway">🪙</div>
+                <div class="task-info">
+                    <h4>Task 3</h4>
+                    <p>+30 coins · 2h cooldown</p>
+                </div>
+                <button class="btn-modern task-btn" data-id="task3">Get +30</button>
             </div>
-            <div class="card">
-                <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 4 (+30)</div>
-                <button class="btn task-btn" data-id="task4">Get +30</button>
+            <!-- Task 4 -->
+            <div class="task-card">
+                <div class="task-icon coin-sway">🪙</div>
+                <div class="task-info">
+                    <h4>Task 4</h4>
+                    <p>+30 coins · 2h cooldown</p>
+                </div>
+                <button class="btn-modern task-btn" data-id="task4">Get +30</button>
             </div>
-            <div class="card">
-                <div class="coin-icon">🪙</div>
-                <div class="task-title">Task 5 (+30)</div>
-                <button class="btn task-btn" data-id="task5">Get +30</button>
+            <!-- Task 5 -->
+            <div class="task-card">
+                <div class="task-icon coin-sway">🪙</div>
+                <div class="task-info">
+                    <h4>Task 5</h4>
+                    <p>+30 coins · 2h cooldown</p>
+                </div>
+                <button class="btn-modern task-btn" data-id="task5">Get +30</button>
             </div>
         </div>
 
         <!-- Earn Section -->
         <div id="earnSection" class="section">
             <div class="placeholder">
-                <h2>💰 Earn More Coins</h2>
-                <p>Watch ads & complete offers</p>
-                <p style="margin-top:20px;">Coming Soon...</p>
+                <h2 style="color:#ffd700; margin-bottom:12px;">💰 Earn More</h2>
+                <p>Watch ads · Complete offers</p>
+                <p style="margin-top:20px; font-size:14px;">Coming soon...</p>
             </div>
         </div>
 
         <!-- Games Section -->
         <div id="gamesSection" class="section">
             <div class="placeholder">
-                <h2>🎮 Play Games</h2>
-                <p>Earn while having fun</p>
-                <p style="margin-top:20px;">Coming Soon...</p>
+                <h2 style="color:#ffd700; margin-bottom:12px;">🎮 Play & Earn</h2>
+                <p>Mini games coming</p>
+                <p style="margin-top:20px; font-size:14px;">Stay tuned</p>
             </div>
         </div>
 
         <!-- Profile Section -->
         <div id="profileSection" class="section">
-            <div class="profile-info">
-                <div class="avatar" style="width:80px; height:80px; font-size:48px; margin:0 auto 20px;">💰</div>
-                <p><strong>Username:</strong> <span id="profileUsername">@username</span></p>
-                <p><strong>Coins:</strong> <span id="profileCoins">0</span></p>
-                <p><strong>Member Since:</strong> 2026</p>
-                <p><strong>Platform:</strong> PayCoinads</p>
+            <div class="profile-premium">
+                <div class="avatar-large">💰</div>
+                <p style="font-size:20px; font-weight:600; margin-bottom:8px;" id="profileUsername">@username</p>
+                <p style="color:#ffd700; font-size:28px; font-weight:700; margin-bottom:12px;"><span id="profileCoins">0</span> 🪙</p>
+                <p style="color:#8e8e9d;">Member since 2026 · PayCoinAds</p>
             </div>
         </div>
 
-        <!-- Navigation -->
-        <nav>
-            <div class="nav-item active" data-tab="home"><div class="nav-icon">🏠</div>Home</div>
-            <div class="nav-item" data-tab="earn"><div class="nav-icon">💰</div>Earn</div>
-            <div class="nav-item" data-tab="games"><div class="nav-icon">🎮</div>Games</div>
-            <div class="nav-item" data-tab="profile"><div class="nav-icon">👤</div>Profile</div>
+        <!-- Floating Navigation -->
+        <nav class="floating-nav">
+            <div class="nav-item active" data-tab="home">
+                <div class="nav-icon">🏠</div>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-tab="earn">
+                <div class="nav-icon">💰</div>
+                <span>Earn</span>
+            </div>
+            <div class="nav-item" data-tab="games">
+                <div class="nav-icon">🎮</div>
+                <span>Games</span>
+            </div>
+            <div class="nav-item" data-tab="profile">
+                <div class="nav-icon">👤</div>
+                <span>Profile</span>
+            </div>
         </nav>
     </div>
 
@@ -408,8 +553,7 @@
         const initData = tg?.initData || '';
 
         // DOM Elements
-        const usernameSpan = document.getElementById('usernameDisplay');
-        const profileUsername = document.getElementById('profileUsername');
+        const usernameSpan = document.getElementById('profileUsername'); // reuse for profile
         const welcomeUsername = document.getElementById('welcomeUsername');
         const totalCoinsSpan = document.getElementById('totalCoins');
         const profileCoinsSpan = document.getElementById('profileCoins');
@@ -417,7 +561,7 @@
         const taskBtns = document.querySelectorAll('.task-btn');
         const withdrawBtn = document.getElementById('withdrawBtn');
 
-        // ==================== Withdrawal Button Click ====================
+        // ==================== Withdrawal Button ====================
         withdrawBtn.addEventListener('click', () => {
             alert('💸 Withdrawal feature coming soon!\nငွေထုတ်ရန် လုပ်ဆောင်ချက် မကြာခင် လာပါမယ်။');
         });
@@ -432,15 +576,36 @@
             return `${h}:${m}:${s}`;
         }
 
+        // Number rolling animation
+        function animateNumber(element, newValue) {
+            const oldValue = parseInt(element.innerText.replace(/,/g, '')) || 0;
+            if (oldValue === newValue) return;
+            
+            let current = oldValue;
+            const step = newValue > oldValue ? 1 : -1;
+            const interval = 10; // ms
+            const duration = 200; // ms
+            const steps = Math.abs(newValue - oldValue);
+            const stepTime = duration / steps;
+            
+            const timer = setInterval(() => {
+                current += step;
+                element.innerText = current.toLocaleString();
+                if (current === newValue) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
         // Update UI with user data from server
         function updateUI(data) {
             const displayName = data.username ? '@' + data.username : 'User';
             usernameSpan.innerText = displayName;
-            profileUsername.innerText = displayName;
             welcomeUsername.innerText = displayName;
 
-            totalCoinsSpan.innerText = data.coins.toLocaleString();
-            profileCoinsSpan.innerText = data.coins.toLocaleString();
+            // Animate coin update
+            animateNumber(totalCoinsSpan, data.coins);
+            animateNumber(profileCoinsSpan, data.coins);
 
             const now = Date.now();
             const dailyLast = data.dailyLastClaim || 0;
@@ -569,7 +734,7 @@
             });
         });
 
-        // Tab Navigation
+        // ==================== Tab Navigation ====================
         const navItems = document.querySelectorAll('.nav-item');
         const sections = {
             home: document.getElementById('homeSection'),
@@ -586,6 +751,16 @@
                 Object.values(sections).forEach(s => s.classList.remove('active'));
                 const tab = item.dataset.tab;
                 if (sections[tab]) sections[tab].classList.add('active');
+            });
+        });
+
+        // ==================== Entrance Animation ====================
+        window.addEventListener('load', () => {
+            // Staggered fade-in for greeting elements
+            const greetingElements = document.querySelectorAll('.greeting-row, .username-badge, .welcome-message');
+            greetingElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.animation = `slideFadeIn 0.5s ease ${index * 0.1 + 0.2}s forwards`;
             });
         });
 
