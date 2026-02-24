@@ -27,6 +27,48 @@
             padding: 20px 15px 100px;
         }
 
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .welcome-card h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            color: #1a1a2e;
+            padding: 15px 30px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(253, 160, 133, 0.4);
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(253, 160, 133, 0.6);
+        }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -212,6 +254,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <header>
             <div class="profile">
                 <div class="avatar">🐱</div>
@@ -225,6 +268,18 @@
                 <span id="totalCoins">1,250</span>
             </div>
         </header>
+
+        <!-- Welcome Card (Start Message) -->
+        <div class="welcome-card" id="welcomeCard">
+            <h1>မင်္ဂလာပါ 👋</h1>
+            <p id="welcomeUsername">@username</p>
+            <p>ဂိမ်းကစားရန် အောက်က Play ကိုနှိပ်ပါ</p>
+        </div>
+
+        <!-- Play Button (Big) -->
+        <div class="play-button" id="playButton">
+            🎮 PLAY GAME
+        </div>
 
         <!-- Home Section -->
         <div id="homeSection" class="section active">
@@ -299,6 +354,7 @@
     </div>
 
     <script>
+        // ==================== Configuration ====================
         const API_BASE = 'https://telegram-task-app-coik.onrender.com'; 
         const tg = window.Telegram?.WebApp;
         
@@ -312,12 +368,19 @@
         // DOM Elements
         const usernameSpan = document.getElementById('usernameDisplay');
         const profileUsername = document.getElementById('profileUsername');
+        const welcomeUsername = document.getElementById('welcomeUsername');
         const totalCoinsSpan = document.getElementById('totalCoins');
         const profileCoinsSpan = document.getElementById('profileCoins');
         const dailyBtn = document.getElementById('dailyBtn');
         const taskBtns = document.querySelectorAll('.task-btn');
+        const playButton = document.getElementById('playButton');
 
-        // Helper: Format milliseconds to HH:MM:SS
+        // ==================== Play Button Click ====================
+        playButton.addEventListener('click', () => {
+            alert('🎮 Game coming soon! မကြာခင် လာပါမယ်။');
+        });
+
+        // ==================== Helper Functions ====================
         function formatTime(ms) {
             if (ms < 0) ms = 0;
             const sec = Math.floor(ms / 1000);
@@ -332,6 +395,7 @@
             const displayName = data.username ? '@' + data.username : 'User';
             usernameSpan.innerText = displayName;
             profileUsername.innerText = displayName;
+            welcomeUsername.innerText = displayName;
 
             totalCoinsSpan.innerText = data.coins.toLocaleString();
             profileCoinsSpan.innerText = data.coins.toLocaleString();
