@@ -17,7 +17,7 @@ app.use(express.json());
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
-    coins: { type: Number, default: 1250 },
+    coins: { type: Number, default: 0 }, // 0 မှစတင်မယ်
     dailyLastClaim: { type: Number, default: 0 },
     tasks: { type: Map, of: Number, default: {} }
 });
