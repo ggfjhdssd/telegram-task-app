@@ -4,25 +4,38 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const crypto = require('crypto');
 const TelegramBot = require('node-telegram-bot-api');
-const helmet = require('helmet'); // Security အတွက်
-const rateLimit = require('express-rate-limit'); // Spam/DDoS ကာကွယ်ရန်
+const helmet = require('helmet'); 
+const rateLimit = require('express-rate-limit'); 
 
 const app = express();
 
 // ==================== Security & Middlewares ====================
-app.use(helmet()); // HTTP Header များကို လုံခြုံအောင်လုပ်ပေးသည်
+app.use(helmet()); 
 app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
-app.use(express.json({ limit: '10kb' })); // Payload size limit ထားပြီး Hack တာကိုကာကွယ်သည်
+app.use(express.json({ limit: '10kb' })); 
 
-// API Rate Limiting (Spam ကာကွယ်ရန်)
+// ည ၁၂ နာရီမှ မနက် ၈ နာရီအထိ Maintenance Mode (Webhook ကလွဲပြီး ကျန်တာပိတ်မည်)
+app.use((req, res, next) => {
+    // Bot webhook ကိုတော့ အမြဲအလုပ်လုပ်ခွင့်ပေးမယ်
+    if (req.path === '/api/webhook' || req.path === '/webhook') return next();
+    
+    const now = new Date();
+    const mmTime = new Date(now.getTime() + (6.5 * 60 * 60 * 1000)); // UTC to Myanmar Time
+    const hour = mmTime.getUTCHours();
+    
+    if (hour >= 0 && hour < 8) {
+        return res.status(503).json({ error: "💤 Server ခေတ္တအနားယူနေပါသည်။ မနက် ၈ နာရီတွင် ပြန်လည်စတင်ပါမည်။" });
+    }
+    next();
+});
+
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 မိနစ်အတွင်း
-    max: 150, // Request 150 ကြိမ်သာခွင့်ပြုမည်
+    windowMs: 15 * 60 * 1000, 
+    max: 150, 
     message: { error: 'Too many requests, please try again later.' }
 });
 app.use('/api/', apiLimiter);
 
-// Claim Route များကို အလွန်အကျွံမနှိပ်နိုင်အောင် Rate Limit ထပ်ခံထားသည်
 const claimLimiter = rateLimit({ 
     windowMs: 60 * 1000, 
     max: 10, 
@@ -39,7 +52,7 @@ const Config = mongoose.model('Config', configSchema);
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
-    photoUrl: { type: String, default: null }, // Profile ပုံအတွက်
+    photoUrl: { type: String, default: null }, 
     coins: { type: Number, default: 0 },
     dailyLastClaim: { type: Number, default: 0 },
     tasks: { type: Map, of: Number, default: {} },
@@ -48,6 +61,8 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     banned: { type: Boolean, default: false }
 });
+// Index ပေးခြင်းဖြင့် User များလာပါက DB ရှာဖွေမှု ပိုမြန်စေသည်
+userSchema.index({ userId: 1 });
 const User = mongoose.model('User', userSchema);
 
 const withdrawalSchema = new mongoose.Schema({
@@ -62,12 +77,8 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
 // ==================== Default Configs ====================
 const DEFAULT_CONFIG = {
-    REFERRAL_REWARD: 10,
-    DAILY_REWARD: 15,
-    TASK_REWARD: 30,
-    MIN_WITHDRAWAL: 1000,
-    TASK_COOLDOWN: 2 * 60 * 60 * 1000, 
-    DAILY_COOLDOWN: 24 * 60 * 60 * 1000 
+    REFERRAL_REWARD: 10, DAILY_REWARD: 15, TASK_REWARD: 30,
+    MIN_WITHDRAWAL: 1000, TASK_COOLDOWN: 2 * 60 * 60 * 1000, DAILY_COOLDOWN: 24 * 60 * 60 * 1000 
 };
 
 async function getConfig(key) {
@@ -88,9 +99,13 @@ const bot = new TelegramBot(process.env.BOT_TOKEN);
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
 const GROUP_ID = parseInt(process.env.GROUP_ID);
 
-bot.setWebHook(process.env.WEBHOOK_URL);
+// Webhook Set လုပ်ခြင်း (Vercel Serverless အတွက်)
+if (process.env.WEBHOOK_URL) {
+    bot.setWebHook(process.env.WEBHOOK_URL);
+}
 
-app.post('/webhook', express.json(), (req, res) => {
+// သတိပြုရန်: Vercel အတွက် Route ကို /api/webhook ပြောင်းထားသည်
+app.post('/api/webhook', express.json(), (req, res) => {
     bot.processUpdate(req.body);
     res.sendStatus(200);
 });
@@ -116,8 +131,7 @@ async function authMiddleware(req, res, next) {
     if (!initData) return res.status(401).json({ error: 'Missing init data' });
     const userData = validateTelegramData(initData);
     if (!userData || !userData.user) return res.status(403).json({ error: 'Invalid init data' });
-    const tgUser = JSON.parse(userData.user);
-    req.tgUser = tgUser;
+    req.tgUser = JSON.parse(userData.user);
     next();
 }
 
@@ -130,10 +144,8 @@ async function getUser(userId, username) {
     return user;
 }
 
-// ==================== Bot Commands ====================
-function isAdmin(msg) {
-    return msg.from.id === ADMIN_ID;
-}
+// ==================== Bot Commands (Admin & Users) ====================
+function isAdmin(msg) { return msg.from.id === ADMIN_ID; }
 
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
@@ -162,13 +174,10 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const welcomeMsg = `မင်္ဂလာပါ ${username}၊ PayCoinAds မှ ကြိုဆိုပါတယ်။ 🎉\n\nဂိမ်းဆော့ပြီး ပိုက်ဆံရှာရန် အောက်က Play Game ကိုနှိပ်ပါ။ 👇`;
     
     await bot.sendMessage(chatId, welcomeMsg, {
-        reply_markup: {
-            inline_keyboard: [[{ text: '🎮 Play Game', web_app: { url: webAppUrl } }]]
-        }
+        reply_markup: { inline_keyboard: [[{ text: '🎮 Play Game', web_app: { url: webAppUrl } }]] }
     });
 });
 
-// Admin commands
 bot.onText(/\/ban (\d+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const targetId = parseInt(match[1]);
@@ -205,12 +214,7 @@ bot.onText(/\/userinfo (\d+)/, async (msg, match) => {
     const user = await User.findOne({ userId: targetId });
     if (!user) return bot.sendMessage(msg.chat.id, 'User not found');
     bot.sendMessage(msg.chat.id, 
-        `👤 User: ${user.username || 'No username'}\n` +
-        `🆔 ID: ${user.userId}\n` +
-        `🪙 Coins: ${user.coins}\n` +
-        `👥 Referrals: ${user.referralCount}\n` +
-        `📅 Joined: ${user.createdAt.toLocaleDateString()}\n` +
-        `🚫 Banned: ${user.banned ? 'Yes' : 'No'}`
+        `👤 User: ${user.username || 'No username'}\n🆔 ID: ${user.userId}\n🪙 Coins: ${user.coins}\n👥 Referrals: ${user.referralCount}\n📅 Joined: ${user.createdAt.toLocaleDateString()}\n🚫 Banned: ${user.banned ? 'Yes' : 'No'}`
     );
 });
 
@@ -255,7 +259,7 @@ bot.onText(/\/approve (\w+)/, async (msg, match) => {
     if (!isAdmin(msg)) return;
     const withdrawalId = match[1];
     await Withdrawal.findByIdAndUpdate(withdrawalId, { status: 'completed' });
-    bot.sendMessage(msg.chat.id, `Withdrawal ${withdrawalId} approved.`);
+    bot.sendMessage(msg.chat.id, `✅ Withdrawal ${withdrawalId} approved.`);
 });
 
 bot.onText(/\/reject (\w+)/, async (msg, match) => {
@@ -265,49 +269,37 @@ bot.onText(/\/reject (\w+)/, async (msg, match) => {
     if (withdrawal) {
         await User.updateOne({ userId: withdrawal.userId }, { $inc: { coins: withdrawal.amount } });
         await Withdrawal.findByIdAndUpdate(withdrawalId, { status: 'rejected' });
-        bot.sendMessage(msg.chat.id, `Withdrawal ${withdrawalId} rejected and refunded.`);
+        bot.sendMessage(msg.chat.id, `❌ Withdrawal ${withdrawalId} rejected and refunded.`);
     }
 });
 
 // ==================== API Routes ====================
-app.get('/health', (req, res) => res.send('OK'));
+app.get('/api/health', (req, res) => res.send('OK'));
 
 app.get('/api/user', authMiddleware, async (req, res) => {
     try {
         const user = await getUser(req.tgUser.id, req.tgUser.username || req.tgUser.first_name);
-        if (user.banned) {
-            return res.status(403).json({ error: 'Your account is banned' });
-        }
+        if (user.banned) return res.status(403).json({ error: 'Your account is banned' });
 
-        // Profile Picture ဆွဲထုတ်ခြင်း
-        try {
-            const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
-            if (photos.total_count > 0) {
-                const fileId = photos.photos[0][0].file_id;
-                const photoUrl = await bot.getFileLink(fileId);
-                if (user.photoUrl !== photoUrl) {
-                    user.photoUrl = photoUrl;
+        // Storage မပြည့်အောင် DB မှာ ပုံမရှိမှသာ Telegram ဆီကနေ လှမ်းဆွဲမည်
+        if (!user.photoUrl) {
+            try {
+                const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
+                if (photos.total_count > 0) {
+                    const fileId = photos.photos[0][0].file_id;
+                    user.photoUrl = await bot.getFileLink(fileId);
                     await user.save();
                 }
-            }
-        } catch (e) { 
-            console.error('Error fetching profile photo:', e.message); 
+            } catch (e) { console.error('Error fetching profile photo:', e.message); }
         }
 
         res.json({
-            userId: user.userId,
-            username: user.username,
-            photoUrl: user.photoUrl, // Frontend သို့ ပုံပါပို့ပေးမည်
-            coins: user.coins,
-            dailyLastClaim: user.dailyLastClaim,
-            tasks: Object.fromEntries(user.tasks),
-            referralCount: user.referralCount,
-            createdAt: user.createdAt,
-            banned: user.banned
+            userId: user.userId, username: user.username, photoUrl: user.photoUrl,
+            coins: user.coins, dailyLastClaim: user.dailyLastClaim,
+            tasks: Object.fromEntries(user.tasks), referralCount: user.referralCount,
+            createdAt: user.createdAt, banned: user.banned
         });
-    } catch (err) {
-        res.status(500).json({ error: 'Database error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'Database error' }); }
 });
 
 app.post('/api/claim/daily', authMiddleware, claimLimiter, async (req, res) => {
@@ -316,17 +308,12 @@ app.post('/api/claim/daily', authMiddleware, claimLimiter, async (req, res) => {
         if (user.banned) return res.status(403).json({ error: 'Banned' });
         const now = Date.now();
         const cooldown = await getConfig('DAILY_COOLDOWN');
-        if (now - user.dailyLastClaim < cooldown) {
-            return res.status(400).json({ error: 'Not ready', remaining: cooldown - (now - user.dailyLastClaim) });
-        }
+        if (now - user.dailyLastClaim < cooldown) return res.status(400).json({ error: 'Not ready', remaining: cooldown - (now - user.dailyLastClaim) });
         const reward = await getConfig('DAILY_REWARD');
-        user.coins += reward;
-        user.dailyLastClaim = now;
+        user.coins += reward; user.dailyLastClaim = now;
         await user.save();
         res.json({ coins: user.coins, dailyLastClaim: user.dailyLastClaim });
-    } catch (err) {
-        res.status(500).json({ error: 'Database error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'Database error' }); }
 });
 
 app.post('/api/claim/task/:taskId', authMiddleware, claimLimiter, async (req, res) => {
@@ -337,52 +324,34 @@ app.post('/api/claim/task/:taskId', authMiddleware, claimLimiter, async (req, re
         const now = Date.now();
         const cooldown = await getConfig('TASK_COOLDOWN');
         const lastClaim = user.tasks.get(taskId) || 0;
-        if (now - lastClaim < cooldown) {
-            return res.status(400).json({ error: 'Not ready', remaining: cooldown - (now - lastClaim) });
-        }
+        if (now - lastClaim < cooldown) return res.status(400).json({ error: 'Not ready', remaining: cooldown - (now - lastClaim) });
         const reward = await getConfig('TASK_REWARD');
-        user.coins += reward;
-        user.tasks.set(taskId, now);
+        user.coins += reward; user.tasks.set(taskId, now);
         await user.save();
         res.json({ coins: user.coins, tasks: Object.fromEntries(user.tasks) });
-    } catch (err) {
-        res.status(500).json({ error: 'Database error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'Database error' }); }
 });
 
 app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
     try {
         const { method, accountDetails, accountName, amount } = req.body; 
-        if (!method || !accountDetails || !amount) {
-            return res.status(400).json({ error: 'Missing fields' });
-        }
-        if (!['kpay', 'wavepay', 'binance'].includes(method)) {
-            return res.status(400).json({ error: 'Invalid payment method' });
-        }
-        
+        if (!method || !accountDetails || !amount) return res.status(400).json({ error: 'Missing fields' });
+        if (!['kpay', 'wavepay', 'binance'].includes(method)) return res.status(400).json({ error: 'Invalid payment method' });
         const withdrawalAmount = Number(amount);
-        if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
-            return res.status(400).json({ error: 'Invalid amount' });
-        }
+        if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
 
         const minWithdraw = await getConfig('MIN_WITHDRAWAL');
-        if (withdrawalAmount < minWithdraw) {
-            return res.status(400).json({ error: `Minimum withdrawal is ${minWithdraw} coins` });
-        }
+        if (withdrawalAmount < minWithdraw) return res.status(400).json({ error: `Minimum withdrawal is ${minWithdraw} coins` });
 
         const user = await getUser(req.tgUser.id, req.tgUser.username);
         if (user.banned) return res.status(403).json({ error: 'Banned' });
-        if (user.coins < withdrawalAmount) {
-            return res.status(400).json({ error: 'Insufficient balance' });
-        }
+        if (user.coins < withdrawalAmount) return res.status(400).json({ error: 'Insufficient balance' });
 
         user.coins -= withdrawalAmount;
         await user.save();
 
         const withdrawal = new Withdrawal({
-            userId: user.userId,
-            amount: withdrawalAmount,
-            method,
+            userId: user.userId, amount: withdrawalAmount, method,
             accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}` 
         });
         await withdrawal.save();
@@ -391,29 +360,17 @@ app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
         await bot.sendMessage(GROUP_ID, message);
 
         res.json({ success: true, remainingCoins: user.coins });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-// ==================== Start Server ====================
-const PORT = process.env.PORT || 5000;
-
+// ==================== Vercel Serverless Export ====================
+// app.listen ဖြုတ်ပြီး Vercel အတွက် Export လုပ်ထားပါသည်
 if (!process.env.MONGODB_URI) {
     console.error('❌ MONGODB_URI is not defined');
-    process.exit(1);
+} else {
+    mongoose.connect(process.env.MONGODB_URI)
+        .then(() => console.log('✅ MongoDB connected'))
+        .catch(err => console.error('❌ MongoDB error:', err));
 }
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('✅ MongoDB connected');
-        app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`🌍 Webhook URL: ${process.env.WEBHOOK_URL}`);
-        });
-    })
-    .catch(err => {
-        console.error('❌ MongoDB error:', err);
-        process.exit(1);
-    });
+module.exports = app;
