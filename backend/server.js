@@ -2,7 +2,7 @@
 // server.js - PayCoinAds Telegram WebApp Backend
 // Environment variables required (set in Render):
 //   BOT_TOKEN, ADMIN_ID, GROUP_ID, FRONTEND_URL,
-//   MONGODB_URI, MIN_WITHDRAWAL, WEBHOOK_URL, PORT (optional)
+//   MONGODB_URI, MIN_WITHDRAWAL, PORT (optional)
 // ============================================
 
 require('dotenv').config();
@@ -68,7 +68,6 @@ const withdrawalSchema = new mongoose.Schema({
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
 // ==================== Default Configuration ====================
-// Default values (can be overridden by environment variables on first run)
 const DEFAULT_CONFIG = {
     REFERRAL_REWARD: 10,
     DAILY_REWARD: 15,
@@ -78,33 +77,28 @@ const DEFAULT_CONFIG = {
     DAILY_COOLDOWN: 24 * 60 * 60 * 1000     // 24 hours
 };
 
-// Helper to get config value from DB (fallback to default)
 async function getConfig(key) {
     let cfg = await Config.findOne({ key });
     if (!cfg) {
-        // If not in DB, use default (which may have been set from env)
         cfg = new Config({ key, value: DEFAULT_CONFIG[key] });
         await cfg.save();
     }
     return cfg.value;
 }
 
-// Helper to set config value in DB
 async function setConfig(key, value) {
     await Config.updateOne({ key }, { value }, { upsert: true });
 }
 
-// Initialize config from environment variables (if not already present)
+// Initialize config from environment variables (first run only)
 async function initConfigFromEnv() {
     const envOverrides = {
         MIN_WITHDRAWAL: process.env.MIN_WITHDRAWAL,
-        // Add other keys here if you want them to be overridable via env
     };
     for (const [key, envValue] of Object.entries(envOverrides)) {
         if (envValue !== undefined && DEFAULT_CONFIG.hasOwnProperty(key)) {
             const existing = await Config.findOne({ key });
             if (!existing) {
-                // Only set if not already in DB (first run)
                 const numValue = isNaN(envValue) ? envValue : parseInt(envValue);
                 await setConfig(key, numValue);
                 console.log(`✅ Initialized ${key} = ${numValue} from environment`);
@@ -118,12 +112,13 @@ const bot = new TelegramBot(process.env.BOT_TOKEN);
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
 const GROUP_ID = parseInt(process.env.GROUP_ID);
 
-// Webhook must be set (ensure WEBHOOK_URL is provided)
-if (!process.env.WEBHOOK_URL) {
-    console.error('❌ WEBHOOK_URL is not defined. Set it to https://your-app.onrender.com/webhook');
+// Webhook URL: use env or construct from RENDER_EXTERNAL_URL (if on Render)
+const WEBHOOK_URL = process.env.WEBHOOK_URL || (process.env.RENDER_EXTERNAL_URL ? `${process.env.RENDER_EXTERNAL_URL}/webhook` : null);
+if (!WEBHOOK_URL) {
+    console.error('❌ WEBHOOK_URL is not defined and could not be constructed from RENDER_EXTERNAL_URL. Set it manually (e.g., https://your-app.onrender.com/webhook).');
     process.exit(1);
 }
-bot.setWebHook(process.env.WEBHOOK_URL);
+bot.setWebHook(WEBHOOK_URL);
 
 // Webhook endpoint for Telegram
 app.post('/webhook', express.json(), (req, res) => {
@@ -163,7 +158,6 @@ async function getUser(userId, username) {
         user = new User({ userId, username: username || '' });
         await user.save();
     } else if (username && user.username !== username) {
-        // Update username if changed
         user.username = username;
         await user.save();
     }
@@ -319,7 +313,6 @@ app.get('/api/user', authMiddleware, async (req, res) => {
             return res.status(403).json({ error: 'Your account is banned' });
         }
 
-        // Fetch and update profile picture if available
         try {
             const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
             if (photos.total_count > 0) {
@@ -448,13 +441,10 @@ if (!process.env.MONGODB_URI) {
 mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
         console.log('✅ MongoDB connected');
-
-        // Initialize config from environment variables (first run only)
         await initConfigFromEnv();
-
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`🌍 Webhook URL: ${process.env.WEBHOOK_URL}`);
+            console.log(`🌍 Webhook URL: ${WEBHOOK_URL}`);
         });
     })
     .catch(err => {
