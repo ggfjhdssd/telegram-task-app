@@ -1,10 +1,13 @@
+
+
+
 {
-  "name": "paycoinads-app",
+  "name": "paycoinads-backend",
   "version": "1.0.0",
-  "main": "api/index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node api/index.js",
-    "dev": "nodemon api/index.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -19,3 +22,8 @@
     "node": ">=18.0.0"
   }
 }
+
+ခြထည့်ထားတာတေက
+backend folderထဲမာserver.js,package.js
+
+frontend folderထံမာပindex.html
