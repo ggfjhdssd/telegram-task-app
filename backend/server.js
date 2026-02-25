@@ -1,32 +1,39 @@
+// ============================================
+// server.js - PayCoinAds Telegram WebApp Backend
+// Environment variables required (set in Render):
+//   BOT_TOKEN, ADMIN_ID, GROUP_ID, FRONTEND_URL,
+//   MONGODB_URI, MIN_WITHDRAWAL, WEBHOOK_URL, PORT (optional)
+// ============================================
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const crypto = require('crypto');
 const TelegramBot = require('node-telegram-bot-api');
-const helmet = require('helmet'); // Security အတွက်
-const rateLimit = require('express-rate-limit'); // Spam/DDoS ကာကွယ်ရန်
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
 // ==================== Security & Middlewares ====================
-app.use(helmet()); // HTTP Header များကို လုံခြုံအောင်လုပ်ပေးသည်
+app.use(helmet());
 app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
-app.use(express.json({ limit: '10kb' })); // Payload size limit ထားပြီး Hack တာကိုကာကွယ်သည်
+app.use(express.json({ limit: '10kb' }));
 
-// API Rate Limiting (Spam ကာကွယ်ရန်)
+// Global rate limiter for API
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 မိနစ်အတွင်း
-    max: 150, // Request 150 ကြိမ်သာခွင့်ပြုမည်
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 150,
     message: { error: 'Too many requests, please try again later.' }
 });
 app.use('/api/', apiLimiter);
 
-// Claim Route များကို အလွန်အကျွံမနှိပ်နိုင်အောင် Rate Limit ထပ်ခံထားသည်
-const claimLimiter = rateLimit({ 
-    windowMs: 60 * 1000, 
-    max: 10, 
-    message: { error: 'Too many clicks. Please slow down.' } 
+// Stricter limiter for claim endpoints
+const claimLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,
+    message: { error: 'Too many clicks. Please slow down.' }
 });
 
 // ==================== MongoDB Models ====================
@@ -39,7 +46,7 @@ const Config = mongoose.model('Config', configSchema);
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
     username: String,
-    photoUrl: { type: String, default: null }, // Profile ပုံအတွက်
+    photoUrl: { type: String, default: null },
     coins: { type: Number, default: 0 },
     dailyLastClaim: { type: Number, default: 0 },
     tasks: { type: Map, of: Number, default: {} },
@@ -56,31 +63,54 @@ const withdrawalSchema = new mongoose.Schema({
     method: { type: String, enum: ['kpay', 'wavepay', 'binance'], required: true },
     accountDetails: { type: String, required: true },
     status: { type: String, enum: ['pending', 'completed', 'rejected'], default: 'pending' },
-    createdAt: { type: Date, default: Date.now, expires: 60 * 60 * 24 * 30 } 
+    createdAt: { type: Date, default: Date.now, expires: 60 * 60 * 24 * 30 } // 30 days TTL
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
-// ==================== Default Configs ====================
+// ==================== Default Configuration ====================
+// Default values (can be overridden by environment variables on first run)
 const DEFAULT_CONFIG = {
     REFERRAL_REWARD: 10,
     DAILY_REWARD: 15,
     TASK_REWARD: 30,
-    MIN_WITHDRAWAL: 1000,
-    TASK_COOLDOWN: 2 * 60 * 60 * 1000, 
-    DAILY_COOLDOWN: 24 * 60 * 60 * 1000 
+    MIN_WITHDRAWAL: parseInt(process.env.MIN_WITHDRAWAL) || 1000,
+    TASK_COOLDOWN: 2 * 60 * 60 * 1000,      // 2 hours
+    DAILY_COOLDOWN: 24 * 60 * 60 * 1000     // 24 hours
 };
 
+// Helper to get config value from DB (fallback to default)
 async function getConfig(key) {
     let cfg = await Config.findOne({ key });
     if (!cfg) {
+        // If not in DB, use default (which may have been set from env)
         cfg = new Config({ key, value: DEFAULT_CONFIG[key] });
         await cfg.save();
     }
     return cfg.value;
 }
 
+// Helper to set config value in DB
 async function setConfig(key, value) {
     await Config.updateOne({ key }, { value }, { upsert: true });
+}
+
+// Initialize config from environment variables (if not already present)
+async function initConfigFromEnv() {
+    const envOverrides = {
+        MIN_WITHDRAWAL: process.env.MIN_WITHDRAWAL,
+        // Add other keys here if you want them to be overridable via env
+    };
+    for (const [key, envValue] of Object.entries(envOverrides)) {
+        if (envValue !== undefined && DEFAULT_CONFIG.hasOwnProperty(key)) {
+            const existing = await Config.findOne({ key });
+            if (!existing) {
+                // Only set if not already in DB (first run)
+                const numValue = isNaN(envValue) ? envValue : parseInt(envValue);
+                await setConfig(key, numValue);
+                console.log(`✅ Initialized ${key} = ${numValue} from environment`);
+            }
+        }
+    }
 }
 
 // ==================== Telegram Bot Setup ====================
@@ -88,8 +118,14 @@ const bot = new TelegramBot(process.env.BOT_TOKEN);
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
 const GROUP_ID = parseInt(process.env.GROUP_ID);
 
+// Webhook must be set (ensure WEBHOOK_URL is provided)
+if (!process.env.WEBHOOK_URL) {
+    console.error('❌ WEBHOOK_URL is not defined. Set it to https://your-app.onrender.com/webhook');
+    process.exit(1);
+}
 bot.setWebHook(process.env.WEBHOOK_URL);
 
+// Webhook endpoint for Telegram
 app.post('/webhook', express.json(), (req, res) => {
     bot.processUpdate(req.body);
     res.sendStatus(200);
@@ -126,6 +162,10 @@ async function getUser(userId, username) {
     if (!user) {
         user = new User({ userId, username: username || '' });
         await user.save();
+    } else if (username && user.username !== username) {
+        // Update username if changed
+        user.username = username;
+        await user.save();
     }
     return user;
 }
@@ -139,7 +179,7 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const username = msg.from.username || msg.from.first_name || 'User';
-    const referralCode = match[1]; 
+    const referralCode = match[1];
 
     let user = await User.findOne({ userId });
     if (!user) {
@@ -157,10 +197,10 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
         }
         await user.save();
     }
-    
+
     const webAppUrl = process.env.FRONTEND_URL;
     const welcomeMsg = `မင်္ဂလာပါ ${username}၊ PayCoinAds မှ ကြိုဆိုပါတယ်။ 🎉\n\nဂိမ်းဆော့ပြီး ပိုက်ဆံရှာရန် အောက်က Play Game ကိုနှိပ်ပါ။ 👇`;
-    
+
     await bot.sendMessage(chatId, welcomeMsg, {
         reply_markup: {
             inline_keyboard: [[{ text: '🎮 Play Game', web_app: { url: webAppUrl } }]]
@@ -204,7 +244,7 @@ bot.onText(/\/userinfo (\d+)/, async (msg, match) => {
     const targetId = parseInt(match[1]);
     const user = await User.findOne({ userId: targetId });
     if (!user) return bot.sendMessage(msg.chat.id, 'User not found');
-    bot.sendMessage(msg.chat.id, 
+    bot.sendMessage(msg.chat.id,
         `👤 User: ${user.username || 'No username'}\n` +
         `🆔 ID: ${user.userId}\n` +
         `🪙 Coins: ${user.coins}\n` +
@@ -279,7 +319,7 @@ app.get('/api/user', authMiddleware, async (req, res) => {
             return res.status(403).json({ error: 'Your account is banned' });
         }
 
-        // Profile Picture ဆွဲထုတ်ခြင်း
+        // Fetch and update profile picture if available
         try {
             const photos = await bot.getUserProfilePhotos(user.userId, { limit: 1 });
             if (photos.total_count > 0) {
@@ -290,14 +330,14 @@ app.get('/api/user', authMiddleware, async (req, res) => {
                     await user.save();
                 }
             }
-        } catch (e) { 
-            console.error('Error fetching profile photo:', e.message); 
+        } catch (e) {
+            console.error('Error fetching profile photo:', e.message);
         }
 
         res.json({
             userId: user.userId,
             username: user.username,
-            photoUrl: user.photoUrl, // Frontend သို့ ပုံပါပို့ပေးမည်
+            photoUrl: user.photoUrl,
             coins: user.coins,
             dailyLastClaim: user.dailyLastClaim,
             tasks: Object.fromEntries(user.tasks),
@@ -352,14 +392,14 @@ app.post('/api/claim/task/:taskId', authMiddleware, claimLimiter, async (req, re
 
 app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
     try {
-        const { method, accountDetails, accountName, amount } = req.body; 
+        const { method, accountDetails, accountName, amount } = req.body;
         if (!method || !accountDetails || !amount) {
             return res.status(400).json({ error: 'Missing fields' });
         }
         if (!['kpay', 'wavepay', 'binance'].includes(method)) {
             return res.status(400).json({ error: 'Invalid payment method' });
         }
-        
+
         const withdrawalAmount = Number(amount);
         if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
             return res.status(400).json({ error: 'Invalid amount' });
@@ -383,7 +423,7 @@ app.post('/api/withdraw', authMiddleware, claimLimiter, async (req, res) => {
             userId: user.userId,
             amount: withdrawalAmount,
             method,
-            accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}` 
+            accountDetails: `${accountDetails} ${accountName ? `(${accountName})` : ''}`
         });
         await withdrawal.save();
 
@@ -406,8 +446,12 @@ if (!process.env.MONGODB_URI) {
 }
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
+    .then(async () => {
         console.log('✅ MongoDB connected');
+
+        // Initialize config from environment variables (first run only)
+        await initConfigFromEnv();
+
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
             console.log(`🌍 Webhook URL: ${process.env.WEBHOOK_URL}`);
